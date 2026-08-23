@@ -1,0 +1,4 @@
+interface:
+  display_name: "Windows MCP Desktop Control"
+  short_description: "Fast Windows automation with mandatory visual verification"
+  default_prompt: "Use Windows-MCP for this desktop task. Verify every requested state change with a fresh screenshot before claiming success."

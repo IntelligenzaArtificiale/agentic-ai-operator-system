@@ -1,0 +1,16 @@
+{
+  "package": "Windows-MCP-for-Codex",
+  "upstream_version": "0.8.5",
+  "upstream_commit": "30c1472f807eefa44774a2fe23a5b10502a59f23",
+  "upstream_repository": "https://github.com/CursorTouch/Windows-MCP",
+  "license": "MIT",
+  "platform": "Windows x64",
+  "mcp_transport": "stdio",
+  "bundled": [
+    "official windows-mcp 0.8.5 wheel",
+    "uv 0.12.5 Windows x64 executable",
+    "Codex plugin and mandatory visual-verification skill",
+    "automatic installer and update checker",
+    "upstream source snapshot"
+  ]
+}

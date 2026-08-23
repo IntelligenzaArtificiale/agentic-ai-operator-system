@@ -1,0 +1,12 @@
+interface:
+  display_name: "WinBridge Windows Control"
+  short_description: "Control Windows apps through WinBridge MCP"
+  default_prompt: "Use $windows-desktop-control to operate this Windows application."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "winbridge"
+      description: "WinBridge local Windows desktop automation server"
+      transport: "stdio"
+policy:
+  allow_implicit_invocation: true

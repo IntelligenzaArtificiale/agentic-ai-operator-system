@@ -1,0 +1,4 @@
+interface:
+  display_name: "Creazione procedura guidata"
+  short_description: "Crea procedure guidate senza registrazioni"
+  default_prompt: "Usa $crea-procedura-guidata per progettare con me una nuova procedura aziendale."

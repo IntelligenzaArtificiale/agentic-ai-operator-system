@@ -1,0 +1,7 @@
+interface:
+  display_name: "Visualizza procedure"
+  short_description: "Apre catalogo, diagrammi e stato sistema"
+  brand_color: "#10B981"
+  default_prompt: "Usa $visualizza-procedure e apri il catalogo locale."
+policy:
+  allow_implicit_invocation: true

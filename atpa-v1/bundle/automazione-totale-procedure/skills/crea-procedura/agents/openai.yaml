@@ -1,0 +1,7 @@
+interface:
+  display_name: "Crea procedura"
+  short_description: "Trasforma registrazioni in procedure eseguibili"
+  brand_color: "#10B981"
+  default_prompt: "Usa $crea-procedura con questi path esportati dal registratore."
+policy:
+  allow_implicit_invocation: true

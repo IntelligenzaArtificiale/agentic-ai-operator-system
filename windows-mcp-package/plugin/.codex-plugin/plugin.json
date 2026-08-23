@@ -1,0 +1,22 @@
+{
+  "name": "windows-mcp",
+  "version": "0.8.5+codex.20260821174357",
+  "description": "Fast Windows desktop control through CursorTouch Windows-MCP",
+  "author": {
+    "name": "CursorTouch / local integration"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Windows MCP",
+    "shortDescription": "Control Windows apps with screenshots, UI state, mouse, and keyboard.",
+    "longDescription": "Makes CursorTouch Windows-MCP the primary local Windows-control mechanism and requires visual verification after UI actions.",
+    "developerName": "CursorTouch / local integration",
+    "category": "Productivity",
+    "capabilities": [
+      "Windows desktop control",
+      "Screenshot verification",
+      "UI automation"
+    ],
+    "defaultPrompt": "Use Windows-MCP to complete the requested Windows desktop task and visually verify every state change."
+  }
+}

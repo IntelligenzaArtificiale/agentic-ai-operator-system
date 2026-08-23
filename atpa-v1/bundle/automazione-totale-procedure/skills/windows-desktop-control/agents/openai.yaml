@@ -1,0 +1,7 @@
+interface:
+  display_name: "Controllo Windows aziendale"
+  short_description: "Automazione Windows rapida e verificata"
+  brand_color: "#10B981"
+  default_prompt: "Usa $windows-desktop-control per completare questa attività Windows."
+policy:
+  allow_implicit_invocation: true

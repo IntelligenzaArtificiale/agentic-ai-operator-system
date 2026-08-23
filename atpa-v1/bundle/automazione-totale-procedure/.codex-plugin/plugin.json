@@ -1,0 +1,21 @@
+{
+  "name": "automazione-totale-procedure",
+  "version": "1.1.0",
+  "description": "Sistema completo per acquisire, creare, collaudare, eseguire e catalogare procedure aziendali Windows",
+  "author": {
+    "name": "Alessandro Ciciarelli",
+    "url": "https://intelligenzaartificialeitalia.net"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Automazione Totale Procedure Aziendali",
+    "shortDescription": "Crea ed esegue procedure aziendali Windows.",
+    "longDescription": "Sistema locale per trasformare registrazioni operative in procedure dinamiche, collaudarle ed eseguirle con verifica adattiva.",
+    "developerName": "Alessandro Ciciarelli · Intelligenza Artificiale Italia",
+    "category": "Productivity",
+    "capabilities": ["Procedure aziendali", "Automazione Windows", "Catalogo visuale"],
+    "websiteURL": "https://intelligenzaartificialeitalia.net",
+    "brandColor": "#10B981",
+    "defaultPrompt": ["Crea una procedura dalla mia registrazione.", "Guidami nella creazione di una procedura senza registrazione.", "Avvia una procedura aziendale.", "Visualizza il catalogo procedure."]
+  }
+}

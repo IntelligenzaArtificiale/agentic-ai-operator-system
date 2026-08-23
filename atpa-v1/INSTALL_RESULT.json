@@ -1,0 +1,10 @@
+{
+    "ok":  true,
+    "version":  "1.0.0",
+    "mcp_configured":  true,
+    "plugin_installed":  true,
+    "recorder_installed":  true,
+    "dashboard_ready":  true,
+    "procedure_root":  "C:\\Users\\alexc\\Documents\\Automazioni Aziendali",
+    "restart_required":  true
+}

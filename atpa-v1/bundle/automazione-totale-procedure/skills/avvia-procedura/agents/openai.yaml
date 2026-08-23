@@ -1,0 +1,7 @@
+interface:
+  display_name: "Avvia procedura"
+  short_description: "Esegue rapidamente una procedura catalogata"
+  brand_color: "#10B981"
+  default_prompt: "Usa $avvia-procedura ed esegui questa procedura."
+policy:
+  allow_implicit_invocation: true

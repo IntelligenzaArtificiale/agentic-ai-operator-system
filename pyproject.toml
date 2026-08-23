@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "winbridge"
+version = "0.6.0"
+description = "Fast hybrid Windows desktop automation exposed as local tools"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "pywinauto==0.6.9",
+  "mcp>=1.12,<2",
+  "pydantic>=2.7,<3",
+  "mss>=9,<11",
+]
+
+[project.optional-dependencies]
+vision = ["Pillow>=10,<12", "opencv-python-headless>=4.10,<5"]
+dev = ["pytest>=8,<9"]
+
+[project.scripts]
+winbridge = "winbridge.server:main"
+winbridge-benchmark = "winbridge.benchmark:main"
+winbridge-selftest = "winbridge.selftest:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/winbridge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

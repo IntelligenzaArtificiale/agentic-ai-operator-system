@@ -1,0 +1,26 @@
+{
+  "name": "Nome procedura",
+  "slug": "nome-procedura",
+  "description": "Descrizione sintetica del risultato aziendale",
+  "department": "",
+  "category": "",
+  "roles": [],
+  "status": "draft",
+  "version": "1.0.0",
+  "created_at": "",
+  "updated_at": "",
+  "last_tested_at": "",
+  "inputs": [],
+  "expected_result": "",
+  "flow": {
+    "nodes": [
+      {"id": "start", "type": "start", "label": "Avvio", "description": "Prerequisiti verificati"},
+      {"id": "work", "type": "action", "label": "Operazione", "description": "Passaggi principali"},
+      {"id": "verify", "type": "verification", "label": "Verifica", "description": "Risultato osservabile"}
+    ],
+    "edges": [
+      {"from": "start", "to": "work"},
+      {"from": "work", "to": "verify"}
+    ]
+  }
+}

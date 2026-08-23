@@ -1,0 +1,7 @@
+interface:
+  display_name: "Modifica procedura"
+  short_description: "Aggiorna procedura, skill e diagramma"
+  brand_color: "#10B981"
+  default_prompt: "Usa $modifica-procedura per applicare queste modifiche."
+policy:
+  allow_implicit_invocation: true

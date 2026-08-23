@@ -1,0 +1,7 @@
+interface:
+  display_name: "Collauda procedura"
+  short_description: "Valida procedure con prove visive Windows"
+  brand_color: "#10B981"
+  default_prompt: "Usa $collauda-procedura per collaudare questa procedura."
+policy:
+  allow_implicit_invocation: true
