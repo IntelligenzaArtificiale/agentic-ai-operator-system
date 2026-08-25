@@ -21,7 +21,7 @@ async def run(executable: str) -> None:
             health = await session.call_tool("health_check", {})
             result = await session.call_tool(
                 "create_desktop_note",
-                {"filename": "WinBridge-0.6.0-MCP-Test.txt", "text": sample, "open_in_notepad": False},
+                {"filename": "Agentic AI Operator System-0.6.0-MCP-Test.txt", "text": sample, "open_in_notepad": False},
             )
     elapsed = time.perf_counter() - started
     if result.isError:

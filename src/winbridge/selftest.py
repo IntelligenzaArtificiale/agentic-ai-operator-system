@@ -164,7 +164,7 @@ def write_note(controller: AutomationController, weather: str, timeout: float) -
         timeout,
         "Save As dialog",
     )
-    output = desktop_path() / f"Meteo_WinBridge_{datetime.now():%Y%m%d_%H%M%S}.txt"
+    output = desktop_path() / f"Meteo_Agentic AI Operator System_{datetime.now():%Y%m%d_%H%M%S}.txt"
     save_spec = Desktop(backend="win32").window(handle=save_dialog.handle)
     filename = save_spec.child_window(class_name="Edit", control_id=1001).wrapper_object()
     filename.set_edit_text(str(output))
@@ -175,7 +175,7 @@ def write_note(controller: AutomationController, weather: str, timeout: float) -
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="WinBridge browser-to-Notepad end-to-end test")
+    parser = argparse.ArgumentParser(description="Agentic AI Operator System browser-to-Notepad end-to-end test")
     parser.add_argument("--timeout", type=float, default=30)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()

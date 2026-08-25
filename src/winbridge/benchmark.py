@@ -9,7 +9,7 @@ from .controller import AutomationController
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Benchmark WinBridge discovery and inspection")
+    parser = argparse.ArgumentParser(description="Benchmark Agentic AI Operator System discovery and inspection")
     parser.add_argument("--title", default="", help="substring of a visible window title")
     parser.add_argument("--runs", type=int, default=3)
     args = parser.parse_args()

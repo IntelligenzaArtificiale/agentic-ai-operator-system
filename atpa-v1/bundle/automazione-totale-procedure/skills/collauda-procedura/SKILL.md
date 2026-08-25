@@ -5,7 +5,7 @@ description: Collauda una procedura aziendale esistente con Windows-MCP, raccogl
 
 # Collauda procedura
 
-Risolvi il nome nella directory `%USERPROFILE%\Documents\Automazioni Aziendali\procedure`; se più nomi corrispondono, chiedi quale. Leggi `procedure.json`, `SKILL.md` e solo i riferimenti necessari al caso.
+Risolvi il nome nella directory `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`; se più nomi corrispondono, chiedi quale. Leggi `procedure.json`, `SKILL.md` e solo i riferimenti necessari al caso.
 
 - Richiedi gli input mancanti prima dell'esecuzione.
 - Usa esclusivamente `windows-mcp` per l'interfaccia Windows.

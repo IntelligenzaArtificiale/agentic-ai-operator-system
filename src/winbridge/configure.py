@@ -22,7 +22,7 @@ def codex_home(explicit: str | None = None) -> Path:
 def configure_mcp(executable: str, explicit_codex_home: str | None = None) -> dict:
     exe = Path(executable).resolve()
     if not exe.is_file() or exe.suffix.casefold() != ".exe":
-        raise FileNotFoundError(f"WinBridge executable not found: {exe}")
+        raise FileNotFoundError(f"Agentic AI Operator System executable not found: {exe}")
     home = codex_home(explicit_codex_home)
     home.mkdir(parents=True, exist_ok=True)
     config = home / "config.toml"
@@ -32,7 +32,7 @@ def configure_mcp(executable: str, explicit_codex_home: str | None = None) -> di
         backup = home / f"config.toml.winbridge-backup-{datetime.now():%Y%m%d%H%M%S}"
         shutil.copy2(config, backup)
 
-    # Replace only WinBridge's own table. Other MCP servers and Codex settings are
+    # Replace only Agentic AI Operator System's own table. Other MCP servers and Codex settings are
     # preserved byte-for-byte.
     pattern = re.compile(r"(?ms)^\[mcp_servers\.winbridge\][^\[]*(?=^\[|\Z)")
     cleaned = pattern.sub("", original).rstrip()

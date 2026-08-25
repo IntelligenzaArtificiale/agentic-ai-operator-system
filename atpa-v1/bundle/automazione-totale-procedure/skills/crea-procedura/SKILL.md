@@ -5,7 +5,7 @@ description: Trasforma una o più esportazioni del registratore in una procedura
 
 # Crea procedura
 
-Ricevi dall'utente uno o più path esportati dal registratore e il nome della procedura. La radice predefinita è `%USERPROFILE%\Documents\Automazioni Aziendali`.
+Ricevi dall'utente uno o più path esportati dal registratore e il nome della procedura. La radice predefinita è `%USERPROFILE%\Documents\Agentic AI Operator System`.
 
 1. Leggi integralmente Markdown, trascrizioni audio, immagini e metadati UI disponibili. Se sono presenti più registrazioni, confrontale e separa invarianti da dati variabili.
 2. Prima di creare file, individua le ambiguità che possono cambiare comportamento, input, bivi, criteri di successo o gestione degli errori. Se ne esistono, poni in chat una sola domanda concreta, attendi la risposta, incorporala e ripeti finché le ambiguità sostanziali sono risolte. Non fare questionari multipli, non inventare risposte e non chiedere dettagli puramente editoriali deducibili dagli asset. Quando utile, proponi nella domanda l'interpretazione più probabile.
@@ -18,4 +18,4 @@ Ricevi dall'utente uno o più path esportati dal registratore e il nome della pr
 9. Compila in `procedure.json` reparto, categoria, ruoli, versione `1.0.0`, stato `draft`, input e un flow con nodi/archi. Se un metadato editoriale non è deducibile, usa una stringa vuota; non usare questo espediente per ambiguità operative.
 10. Esegui lo script runtime `Update-Dashboard.ps1` se disponibile e comunica path creato, input individuati e punti ancora da collaudare. Non eseguire la procedura in questa fase.
 
-Firma editoriale dei file generati: “Automazione Totale Procedure Aziendali · Alessandro Ciciarelli · Intelligenza Artificiale Italia”.
+Firma editoriale dei file generati: “Agentic AI Operator System · Alessandro Ciciarelli · Intelligenza Artificiale Italia”.

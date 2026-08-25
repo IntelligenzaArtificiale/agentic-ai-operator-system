@@ -1,12 +1,12 @@
 interface:
-  display_name: "WinBridge Windows Control"
-  short_description: "Control Windows apps through WinBridge MCP"
+  display_name: "Agentic AI Operator System Windows Control"
+  short_description: "Control Windows apps through Agentic AI Operator System MCP"
   default_prompt: "Use $windows-desktop-control to operate this Windows application."
 dependencies:
   tools:
     - type: "mcp"
       value: "winbridge"
-      description: "WinBridge local Windows desktop automation server"
+      description: "Agentic AI Operator System local Windows desktop automation server"
       transport: "stdio"
 policy:
   allow_implicit_invocation: true

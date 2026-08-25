@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 $packageRoot = $PSScriptRoot
 $sourceApp = Join-Path $packageRoot 'app'
 $sourcePlugin = Join-Path $packageRoot 'plugin'
-$programRoot = Join-Path $env:LOCALAPPDATA 'Programs\WinBridge'
+$programRoot = Join-Path $env:LOCALAPPDATA 'Programs\Agentic AI Operator System'
 $personalRoot = Join-Path $HOME '.agents\plugins'
 $pluginRoot = Join-Path $HOME 'plugins\winbridge'
 $marketplaceFile = Join-Path $personalRoot 'marketplace.json'
@@ -24,9 +24,9 @@ function Find-CodexCli {
     throw 'Codex CLI eseguibile non trovato. Installa o aggiorna l app ChatGPT/Codex.'
 }
 
-if (-not [Environment]::Is64BitOperatingSystem -or $env:OS -ne 'Windows_NT') { throw 'WinBridge 0.6.0 richiede Windows x64.' }
+if (-not [Environment]::Is64BitOperatingSystem -or $env:OS -ne 'Windows_NT') { throw 'Agentic AI Operator System 0.6.0 richiede Windows x64.' }
 if (-not (Test-Path -LiteralPath (Join-Path $sourceApp 'winbridge.exe'))) { throw 'Pacchetto non valido: app\winbridge.exe non trovato.' }
-if (-not (Test-Path -LiteralPath (Join-Path $sourcePlugin '.codex-plugin\plugin.json'))) { throw 'Pacchetto non valido: plugin WinBridge non trovato.' }
+if (-not (Test-Path -LiteralPath (Join-Path $sourcePlugin '.codex-plugin\plugin.json'))) { throw 'Pacchetto non valido: plugin Agentic AI Operator System non trovato.' }
 
 $codexCli = Find-CodexCli
 $allowedProcessRoots = @(
@@ -66,11 +66,11 @@ $pluginListBefore = (& $codexCli plugin list | Out-String)
 $alreadyCurrent = $pluginListBefore -match ("(?m)^winbridge@personal\s+installed, enabled\s+" + [regex]::Escape($sourceVersion) + "\s")
 if (-not $alreadyCurrent) {
     & $codexCli plugin add 'winbridge@personal'
-    if ($LASTEXITCODE -ne 0) { throw 'Installazione del plugin WinBridge non riuscita.' }
+    if ($LASTEXITCODE -ne 0) { throw 'Installazione del plugin Agentic AI Operator System non riuscita.' }
 }
 $directExe = Join-Path $pluginRoot 'app\winbridge.exe'
 $mcpConfigure = (& $directExe --configure-mcp --executable $directExe | Out-String)
-if ($LASTEXITCODE -ne 0 -or $mcpConfigure -notmatch '"ok": true') { throw 'Registrazione MCP diretta di WinBridge non riuscita.' }
+if ($LASTEXITCODE -ne 0 -or $mcpConfigure -notmatch '"ok": true') { throw 'Registrazione MCP diretta di Agentic AI Operator System non riuscita.' }
 Copy-Item -LiteralPath (Join-Path $packageRoot 'Check-WinBridgeUpdate.ps1') -Destination $programRoot -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'Uninstall-WinBridge.ps1') -Destination $programRoot -Force
 if ($UpdateManifestUrl) {
@@ -84,6 +84,6 @@ $result = [ordered]@{ ok=($pluginList -match 'winbridge@personal' -and $mcpList 
 $resultFile = if ($ResultPath) {$ResultPath} else {Join-Path $programRoot 'INSTALL_RESULT.json'}
 Write-Utf8NoBom $resultFile ($result | ConvertTo-Json -Depth 5)
 if (-not $result.ok) { throw 'Verifica finale plugin/MCP non riuscita. Controllare INSTALL_RESULT.json.' }
-Write-Host "WinBridge 0.6.0 installato come plugin personale e MCP globale: $pluginRoot"
+Write-Host "Agentic AI Operator System 0.6.0 installato come plugin personale e MCP globale: $pluginRoot"
 Write-Host "Risultato: $resultFile"
 Write-Host 'Chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task.'

@@ -15,6 +15,6 @@ if (Test-Path -LiteralPath $marketplaceFile) {
     [IO.File]::WriteAllText($marketplaceFile, ($marketplace | ConvertTo-Json -Depth 10), [Text.UTF8Encoding]::new($false))
 }
 if (Test-Path -LiteralPath $pluginRoot) { Remove-Item -LiteralPath $pluginRoot -Recurse -Force }
-$programRoot = Join-Path $env:LOCALAPPDATA 'Programs\WinBridge'
+$programRoot = Join-Path $env:LOCALAPPDATA 'Programs\Agentic AI Operator System'
 if (Test-Path -LiteralPath $programRoot) { Remove-Item -LiteralPath $programRoot -Recurse -Force }
-Write-Host 'Plugin WinBridge disinstallato.'
+Write-Host 'Plugin Agentic AI Operator System disinstallato.'

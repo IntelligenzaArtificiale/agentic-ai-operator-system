@@ -5,7 +5,7 @@ description: Esegue per nome una procedura aziendale già creata usando Windows-
 
 # Avvia procedura
 
-Trova la procedura per nome o slug sotto `%USERPROFILE%\Documents\Automazioni Aziendali\procedure`. Leggi prima `procedure.json` e il suo `SKILL.md`; carica riferimenti ed eccezioni solo quando diventano rilevanti. Avvisa se lo stato non è `validated` o `active` e chiedi conferma prima di eseguire una bozza.
+Trova la procedura per nome o slug sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`. Leggi prima `procedure.json` e il suo `SKILL.md`; carica riferimenti ed eccezioni solo quando diventano rilevanti. Avvisa se lo stato non è `validated` o `active` e chiedi conferma prima di eseguire una bozza.
 
 Usa esclusivamente `windows-mcp` per il desktop. Ottimizza l'esecuzione:
 

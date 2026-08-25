@@ -5,7 +5,7 @@ description: Aggiorna una procedura aziendale e il relativo SKILL.md, schema, ri
 
 # Modifica procedura
 
-Risolvi la procedura sotto `%USERPROFILE%\Documents\Automazioni Aziendali\procedure` e leggi `procedure.json`, `SKILL.md` e soltanto i riferimenti coinvolti.
+Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` e leggi `procedure.json`, `SKILL.md` e soltanto i riferimenti coinvolti.
 
 1. Applica la richiesta coerentemente a istruzioni, flow, input, condizioni, test e screenshot di riferimento.
 2. Non alterare `recording\`, che conserva la fonte originale. Aggiungi nuove registrazioni come sottocartelle datate.

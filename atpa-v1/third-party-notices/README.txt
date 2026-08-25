@@ -1,6 +1,6 @@
 AVVISI COMPONENTI DI TERZE PARTI
 
-Automazione Totale Procedure Aziendali è ideato e pubblicato da Alessandro Ciciarelli,
+Agentic AI Operator System è ideato e pubblicato da Alessandro Ciciarelli,
 fondatore di Intelligenza Artificiale Italia.
 
 Questa directory conserva esclusivamente le attribuzioni e le licenze richieste per i

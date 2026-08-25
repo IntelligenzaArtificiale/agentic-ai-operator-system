@@ -1,6 +1,8 @@
-# WinBridge
+# Agentic AI Operator System
 
-WinBridge is an experimental local MCP server for fast Windows desktop automation.
+Agentic AI Operator System is a local Windows platform for desktop automation,
+process recording and reusable agentic procedures. Its automation engine retains
+the internal `winbridge` identifier for compatibility.
 It uses a layered strategy instead of assuming that every application exposes the
 same accessibility model:
 
@@ -34,12 +36,11 @@ Run the MCP server over stdio:
 
 Build the portable package with `build_release.ps1`. On another Windows PC:
 
-1. Extract `WinBridge-0.6.0-Windows-x64.zip`.
+1. Extract `Agentic-AI-Operator-System-2.0.0-Windows-x64.zip`.
 2. Double-click `INSTALLA.cmd` (administrator rights are not required).
 3. Restart the ChatGPT desktop app or Codex.
-4. Type `/mcp` to verify that the global `winbridge` server is connected.
-5. Ask WinBridge to create a Desktop note; version 0.6.0 writes it atomically and
-   opens the finished file, avoiding slow and unreliable Notepad keystrokes.
+4. Type `/mcp` to verify that the global Windows automation server is connected.
+5. Open the bundled OpenSteps recorder from the Desktop shortcut.
 
 An AI agent can install the archive autonomously after the user supplies its path
 and explicitly requests installation. The archive-root `AGENTS.md` and
@@ -48,8 +49,11 @@ up the personal marketplace, installs `winbridge@personal`, and registers its
 bundled executable as the global `winbridge` MCP server. `DISINSTALLA.cmd` removes the per-user
 installation.
 
-This prototype targets supported Windows 10 and Windows 11 releases. A universal
+Updates are discovered through `release-manifest.json`; downloads are accepted
+only after their SHA-256 has been verified.
+
+This system targets supported Windows 10 and Windows 11 releases. A universal
 "100% of every application" guarantee is not technically possible: secure desktop,
 UIPI integrity boundaries, DRM/protected surfaces, anti-cheat software and custom
-renderers deliberately restrict inspection or input. WinBridge reports these cases
+renderers deliberately restrict inspection or input. Agentic AI Operator System reports these cases
 instead of silently pretending an action succeeded.

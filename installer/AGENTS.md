@@ -1,4 +1,4 @@
-# WinBridge agent installation contract
+# Agentic AI Operator System agent installation contract
 
 When the user explicitly asks you to install this ZIP/package, perform the following
 steps. The user's request to install is the authorization for these local changes.
@@ -15,14 +15,14 @@ steps. The user's request to install is the authorization for these local change
 7. Tell the user that ChatGPT/Codex must be fully restarted to load the new MCP
    server. Do not attempt to automate or restart the ChatGPT desktop app UI.
 8. After restart, create a new task. An already-open task retains its old native
-   tool inventory and cannot acquire WinBridge retroactively.
+   tool inventory and cannot acquire Agentic AI Operator System retroactively.
 9. In the new task, use `/mcp` to verify the global `winbridge` server and verify that
    `$windows-desktop-control` is available. For every Windows desktop action,
-   use WinBridge. Do not use Chrome, Browser or Computer Use unless WinBridge
+   use Agentic AI Operator System. Do not use Chrome, Browser or Computer Use unless Agentic AI Operator System
    reports an unsupported operation and the user then authorizes that fallback.
    For Desktop notes, use `create_desktop_note` once instead of typing into
    Notepad or operating its Save dialog.
-10. If WinBridge tools are absent, stop. Never launch `winbridge.exe` manually through
+10. If Agentic AI Operator System tools are absent, stop. Never launch `winbridge.exe` manually through
     PowerShell or another shell as a substitute for the native MCP connection.
 
 Never disable Windows security, bypass SmartScreen, request credentials, or alter

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$ProcedureRoot = (Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Automazioni Aziendali'),
+    [string]$ProcedureRoot = (Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Agentic AI Operator System'),
     [switch]$Open
 )
 $ErrorActionPreference='Stop'
@@ -27,7 +27,7 @@ if($codex){
     try{$plugin=((& $codex plugin list 2>$null | Out-String) -match '(?m)^automazione-totale-procedure@personal\s+installed, enabled')}catch{}
 }
 $chatgpt=[bool](Get-AppxPackage -ErrorAction SilentlyContinue | Where-Object {$_.Name -match 'ChatGPT|OpenAI' -or $_.PackageFullName -match 'ChatGPT|OpenAI'} | Select-Object -First 1)
-$recorder=[bool](Get-ChildItem -LiteralPath (Join-Path $env:LOCALAPPDATA 'Programs\Intelligenza Artificiale Italia\Automazione Totale Procedure Aziendali\Recorder') -Filter OpenSteps.App.exe -Recurse -File -ErrorAction SilentlyContinue | Select-Object -First 1)
+$recorder=[bool](Get-ChildItem -LiteralPath (Join-Path $env:LOCALAPPDATA 'Programs\Intelligenza Artificiale Italia\Agentic AI Operator System\OpenSteps') -Filter OpenSteps.App.exe -Recurse -File -ErrorAction SilentlyContinue | Select-Object -First 1)
 $items=@()
 $proceduresPath=Join-Path $ProcedureRoot 'procedure'
 if(Test-Path -LiteralPath $proceduresPath){
@@ -44,7 +44,7 @@ if(Test-Path -LiteralPath $proceduresPath){
 }
 $counts=[ordered]@{total=$items.Count;draft=@($items|Where-Object {$_.meta.status -eq 'draft'}).Count;validated=@($items|Where-Object {$_.meta.status -eq 'validated'}).Count;active=@($items|Where-Object {$_.meta.status -eq 'active'}).Count}
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='1.1.0';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.0.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     counts=$counts;procedures=$items
 }

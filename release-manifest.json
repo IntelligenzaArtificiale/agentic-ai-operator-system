@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "product": "Agentic AI Operator System",
+  "version": "2.0.0",
+  "channel": "stable",
+  "platform": "windows-x64",
+  "zip_url": "https://github.com/IntelligenzaArtificiale/agentic-ai-operator-system/releases/download/v2.0.0/Agentic-AI-Operator-System-2.0.0-Windows-x64.zip",
+  "sha256": "36546A26938C575FA3FB1CDC7608361DA3452AABFA153D7EEEF7CAAB332AFD6D",
+  "published_at": "2026-08-25T13:14:39.1364804Z",
+  "minimum_windows": "10"
+}

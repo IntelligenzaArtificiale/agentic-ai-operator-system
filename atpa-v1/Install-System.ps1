@@ -1,10 +1,15 @@
 [CmdletBinding()]
-param([switch]$NonInteractive,[string]$ResultPath)
+param(
+    [switch]$NonInteractive,
+    [string]$ResultPath,
+    [string]$UpdateManifestUrl='https://github.com/IntelligenzaArtificiale/agentic-ai-operator-system/releases/latest/download/release-manifest.json'
+)
 $ErrorActionPreference='Stop'
 $packageRoot=$PSScriptRoot
 $userRoot=[IO.Path]::GetFullPath($env:USERPROFILE)
-$programRoot=Join-Path $env:LOCALAPPDATA 'Programs\Intelligenza Artificiale Italia\Automazione Totale Procedure Aziendali'
-$procedureRoot=Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Automazioni Aziendali'
+$programRoot=Join-Path $env:LOCALAPPDATA 'Programs\Intelligenza Artificiale Italia\Agentic AI Operator System'
+$procedureRoot=Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Agentic AI Operator System'
+$legacyProcedureRoot=Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Automazioni Aziendali'
 $pluginName='automazione-totale-procedure'
 $pluginSource=Join-Path $packageRoot "bundle\$pluginName"
 $pluginRoot=Join-Path $userRoot "plugins\$pluginName"
@@ -12,7 +17,8 @@ $marketplaceRoot=Join-Path $userRoot '.agents\plugins'
 $marketplaceFile=Join-Path $marketplaceRoot 'marketplace.json'
 $uv=Join-Path $packageRoot 'payload\uv.exe'
 $wheel=Join-Path $packageRoot 'payload\windows_mcp-0.8.5-py3-none-any.whl'
-$recorderArchive=Join-Path $packageRoot 'payload\ProcedureRecorder-0.1.0-win-x64.zip'
+$recorderArchive=Join-Path $packageRoot 'payload\OpenSteps-0.1.0-win-x64.zip'
+if(-not(Test-Path -LiteralPath $recorderArchive)){$recorderArchive=Join-Path $packageRoot 'payload\ProcedureRecorder-0.1.0-win-x64.zip'}
 $windowsMcpExe=Join-Path $userRoot '.local\bin\windows-mcp.exe'
 
 function Write-Utf8([string]$Path,[string]$Text){[IO.File]::WriteAllText($Path,$Text,[Text.UTF8Encoding]::new($false))}
@@ -48,20 +54,28 @@ if($LASTEXITCODE -ne 0 -or -not(Test-Path -LiteralPath $windowsMcpExe)){throw 'I
 & $codex mcp add windows-mcp -- $windowsMcpExe serve
 if($LASTEXITCODE -ne 0){throw 'Registrazione MCP non riuscita.'}
 
-# Runtime e registratore portatile.
+# Runtime, aggiornamenti e OpenSteps portatile.
 New-Item -ItemType Directory -Force -Path $programRoot | Out-Null
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\Update-Dashboard.ps1') -Destination $programRoot -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\dashboard') -Destination $programRoot -Recurse -Force
-$recorderRoot=Join-Path $programRoot 'Recorder\0.1.0'
+$updaterSource=Join-Path $packageRoot 'Check-AgenticUpdate.ps1'
+if(-not(Test-Path -LiteralPath $updaterSource)){throw 'Pacchetto incompleto: Check-AgenticUpdate.ps1'}
+Copy-Item -LiteralPath $updaterSource -Destination $programRoot -Force
+Write-Utf8 (Join-Path $programRoot 'update-settings.json') (@{update_manifest_url=$UpdateManifestUrl}|ConvertTo-Json)
+Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.0.0';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
+$recorderRoot=Join-Path $programRoot 'OpenSteps\0.1.0'
 if(-not(Test-Path -LiteralPath $recorderRoot)){New-Item -ItemType Directory -Force -Path $recorderRoot|Out-Null;Expand-Archive -LiteralPath $recorderArchive -DestinationPath $recorderRoot}
 $recorderExe=Get-ChildItem -LiteralPath $recorderRoot -Filter OpenSteps.App.exe -Recurse -File|Select-Object -First 1
 if(-not $recorderExe){throw 'Registratore non trovato dopo l estrazione.'}
 $desktop=[Environment]::GetFolderPath('Desktop')
 $shell=New-Object -ComObject WScript.Shell
-$shortcut=$shell.CreateShortcut((Join-Path $desktop 'Registratore Procedure Aziendali.lnk'))
-$shortcut.TargetPath=$recorderExe.FullName;$shortcut.WorkingDirectory=$recorderExe.DirectoryName;$shortcut.Description='Automazione Totale Procedure Aziendali · Intelligenza Artificiale Italia';$shortcut.Save()
+$shortcut=$shell.CreateShortcut((Join-Path $desktop 'Agentic AI Operator System - OpenSteps.lnk'))
+$shortcut.TargetPath=$recorderExe.FullName;$shortcut.WorkingDirectory=$recorderExe.DirectoryName;$shortcut.Description='Agentic AI Operator System · Intelligenza Artificiale Italia';$shortcut.Save()
 
-# Struttura procedure senza creare procedure reali.
+# Migrazione non distruttiva e struttura procedure senza creare procedure reali.
+if((Test-Path -LiteralPath $legacyProcedureRoot) -and -not(Test-Path -LiteralPath $procedureRoot)){
+    Copy-Item -LiteralPath $legacyProcedureRoot -Destination $procedureRoot -Recurse
+}
 New-Item -ItemType Directory -Force -Path $procedureRoot,(Join-Path $procedureRoot 'procedure'),(Join-Path $procedureRoot 'registrazioni'),(Join-Path $procedureRoot 'catalogo')|Out-Null
 $templateTarget=Join-Path $procedureRoot 'TEMPLATE-PROCEDURA'
 if(-not(Test-Path -LiteralPath $templateTarget)){Copy-Item -LiteralPath (Join-Path $packageRoot 'template\TEMPLATE-PROCEDURA') -Destination $templateTarget -Recurse}
@@ -87,11 +101,11 @@ $dashboardScript=Join-Path $programRoot 'Update-Dashboard.ps1'
 & $dashboardScript -ProcedureRoot $procedureRoot | Out-Null
 $mcpText=& $codex mcp get windows-mcp 2>$null|Out-String
 $pluginText=& $codex plugin list 2>$null|Out-String
-$result=[ordered]@{ok=$false;version='1.1.0';mcp_configured=($mcpText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");recorder_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);dashboard_ready=(Test-Path -LiteralPath (Join-Path $procedureRoot 'catalogo\index.html'));procedure_root=$procedureRoot;restart_required=$true}
-$result.ok=$result.mcp_configured -and $result.plugin_installed -and $result.recorder_installed -and $result.dashboard_ready
+$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.0.0';mcp_configured=($mcpText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $procedureRoot 'catalogo\index.html'));procedure_root=$procedureRoot;restart_required=$true}
+$result.ok=$result.mcp_configured -and $result.plugin_installed -and $result.opensteps_installed -and $result.updater_installed -and $result.dashboard_ready
 $out=if($ResultPath){$ResultPath}else{Join-Path $packageRoot 'INSTALL_RESULT.json'};Write-Utf8 $out ($result|ConvertTo-Json -Depth 6)
 if(-not $result.ok){throw "Verifica fallita. Leggi $out"}
 if(-not $NonInteractive){& $dashboardScript -ProcedureRoot $procedureRoot -Open|Out-Null}
-Write-Host 'Automazione Totale Procedure Aziendali 1.1.0 installata correttamente.'
+Write-Host 'Agentic AI Operator System 2.0.0 installato correttamente.'
 Write-Host "Risultato: $out"
 Write-Host 'Chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Il sistema e pronto per la prima procedura.'

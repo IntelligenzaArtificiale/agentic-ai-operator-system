@@ -10,19 +10,19 @@ from .controller import AutomationController
 
 SERVER_INSTRUCTIONS = (
     "For every task that operates the local Windows desktop or a native Windows "
-    "application, use WinBridge first and keep using it for the whole workflow. "
+    "application, use Agentic AI Operator System first and keep using it for the whole workflow. "
     "Prefer semantic UIA/Win32 inspection and set_control_value. For custom-rendered "
     "interfaces, call capture_window, reason from its pixels, then use "
     "click_and_capture and visually inspect the returned image. A successful click "
     "is not proof that the requested state changed. Do not switch to Computer Use or "
-    "shell-driven UI automation unless WinBridge returns an explicit unsupported "
+    "shell-driven UI automation unless Agentic AI Operator System returns an explicit unsupported "
     "operation or repeated error. Minimize round trips: inspect once, reuse HWNDs, "
     "and type complete text in one call. For desktop notes, always use "
     "create_desktop_note instead of typing into Notepad or using Save dialogs. "
-    "Never start winbridge.exe manually through a shell. If native WinBridge tools "
+    "Never start winbridge.exe manually through a shell. If native Agentic AI Operator System tools "
     "are absent, stop immediately and tell the user to restart Codex and open a new "
     "task. Do not switch to Chrome, Browser, or Computer Use unless the user explicitly "
-    "authorizes it after WinBridge reports an unsupported operation."
+    "authorizes it after Agentic AI Operator System reports an unsupported operation."
 )
 
 mcp = FastMCP("winbridge", instructions=SERVER_INSTRUCTIONS)
@@ -31,7 +31,7 @@ controller = AutomationController()
 
 @mcp.tool()
 def health_check() -> dict:
-    """Return immediately when the native WinBridge MCP connection is healthy."""
+    """Return immediately when the native Agentic AI Operator System MCP connection is healthy."""
     return {"ok": True, "version": __version__}
 
 

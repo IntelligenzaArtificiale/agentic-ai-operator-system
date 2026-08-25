@@ -1,13 +1,15 @@
 {
-  "name": "Automazione Totale Procedure Aziendali",
-  "version": "1.1.0",
+  "name": "Agentic AI Operator System",
+  "version": "2.0.0",
   "author": "Alessandro Ciciarelli",
   "organization": "Intelligenza Artificiale Italia",
   "website": "https://intelligenzaartificialeitalia.net",
   "platform": "Windows 10/11 x64",
   "components": {
     "windows_control_engine": "0.8.5",
-    "procedure_recorder": "0.1.0",
-    "plugin": "1.1.0"
-  }
+    "procedure_recorder": "OpenSteps 0.1.0",
+    "plugin": "2.0.0"
+  },
+  "repository": "https://github.com/IntelligenzaArtificiale/agentic-ai-operator-system",
+  "update_manifest_url": "https://github.com/IntelligenzaArtificiale/agentic-ai-operator-system/releases/latest/download/release-manifest.json"
 }

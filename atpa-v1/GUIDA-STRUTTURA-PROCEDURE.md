@@ -30,4 +30,4 @@ Le registrazioni originali non vengono caricate durante l'esecuzione normale. La
 
 `procedure.json` contiene nome, slug, descrizione, reparto, categoria, ruoli, stato, versione, date, input, risultato atteso e grafo del flusso. Il dashboard legge esclusivamente questi metadati e gli screenshot selezionati, quindi non avvia processi MCP in background.
 
-Firma editoriale: **Automazione Totale Procedure Aziendali · Alessandro Ciciarelli · Intelligenza Artificiale Italia**.
+Firma editoriale: **Agentic AI Operator System · Alessandro Ciciarelli · Intelligenza Artificiale Italia**.

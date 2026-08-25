@@ -5,7 +5,7 @@ description: Progetta e crea una procedura aziendale completa tramite intervista
 
 # Crea procedura guidata
 
-Costruisci una procedura sotto `%USERPROFILE%\Documents\Automazioni Aziendali\procedure` partendo dalle informazioni dell'utente, senza richiedere né avviare OpenSteps.
+Costruisci una procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` partendo dalle informazioni dell'utente, senza richiedere né avviare OpenSteps.
 
 ## Intervista adattiva
 
@@ -19,7 +19,7 @@ Non creare la directory definitiva prima della conferma. Se l'utente chiede espl
 
 ## Creazione
 
-1. Copia la struttura di `%USERPROFILE%\Documents\Automazioni Aziendali\TEMPLATE-PROCEDURA` in `procedure\<slug>` senza modificare il template originale.
+1. Copia la struttura di `%USERPROFILE%\Documents\Agentic AI Operator System\TEMPLATE-PROCEDURA` in `procedure\<slug>` senza modificare il template originale.
 2. Genera e completa `procedure.json`, `SKILL.md`, `references\procedure.md`, `references\test-cases.md`, `references\screenshots\`, `tests\`, `runs\` e `CHANGELOG.md`. La cartella `recording\` può essere assente o vuota: la procedura non deve dipendere da una registrazione.
 3. Trasforma la descrizione umana in intenzioni e target semantici, non in coordinate inventate. Prima di ogni gruppo operativo stabilisci applicazione, finestra, vista e controllo destinatari; usa l'interazione diretta dell'applicazione e non workaround da terminale.
 4. Inserisci checkpoint significativi, bivi, condizioni di arresto, massimo due tentativi correttivi e una prova osservabile del risultato finale. Raggruppa azioni soltanto nello stesso contesto stabile; l'efficienza non deve ridurre l'affidabilità.
@@ -27,4 +27,4 @@ Non creare la directory definitiva prima della conferma. Se l'utente chiede espl
 6. Imposta versione `1.0.0` e stato `draft`, compila flow, reparto, categoria e ruoli, quindi valida JSON e struttura. Esegui `Update-Dashboard.ps1` se disponibile.
 7. Comunica path creato, input richiesti, assunzioni confermate e aspetti da collaudare. Non eseguire automaticamente la procedura.
 
-Firma editoriale: “Automazione Totale Procedure Aziendali · Alessandro Ciciarelli · Intelligenza Artificiale Italia”.
+Firma editoriale: “Agentic AI Operator System · Alessandro Ciciarelli · Intelligenza Artificiale Italia”.

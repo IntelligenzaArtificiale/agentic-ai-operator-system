@@ -2,15 +2,15 @@
   "name": "winbridge",
   "version": "0.6.0",
   "description": "Fast local control of Windows applications through UI Automation and Win32.",
-  "author": { "name": "WinBridge" },
+  "author": { "name": "Agentic AI Operator System" },
   "skills": "./skills/",
   "interface": {
-    "displayName": "WinBridge",
+    "displayName": "Agentic AI Operator System",
     "shortDescription": "Fast control of native Windows applications.",
     "longDescription": "Launch, inspect and operate Windows applications using semantic UI Automation and Win32 controls.",
-    "developerName": "WinBridge",
+    "developerName": "Agentic AI Operator System",
     "category": "Productivity",
     "capabilities": ["Interactive", "Write"],
-    "defaultPrompt": ["Use WinBridge to control a Windows application."]
+    "defaultPrompt": ["Use Agentic AI Operator System to control a Windows application."]
   }
 }

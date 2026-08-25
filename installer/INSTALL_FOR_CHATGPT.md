@@ -1,4 +1,4 @@
-# Installazione autonoma di WinBridge da parte di ChatGPT/Codex
+# Installazione autonoma di Agentic AI Operator System da parte di ChatGPT/Codex
 
 Questo pacchetto contiene tutto il necessario e non richiede Python, pip o privilegi
 di amministratore. Deve essere installato solo dopo una richiesta esplicita
@@ -19,10 +19,10 @@ dell'utente.
 6. Chiedere all'utente di chiudere completamente e riaprire ChatGPT/Codex. Il
    riavvio dell'app non deve essere automatizzato.
 7. Dopo il riavvio, aprire una **nuova task**: una task gia aperta conserva il
-   precedente elenco degli strumenti e non acquisisce WinBridge a posteriori.
+   precedente elenco degli strumenti e non acquisisce Agentic AI Operator System a posteriori.
 8. Nella nuova task verificare la presenza del server globale `winbridge` con `/mcp` e
    della skill `$windows-desktop-control`. Per ogni azione sul desktop Windows
-   usare sempre prima WinBridge.
+   usare sempre prima Agentic AI Operator System.
 
 ## Cosa fa l'installer
 
