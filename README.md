@@ -36,7 +36,7 @@ Run the MCP server over stdio:
 
 Build the portable package with `build_release.ps1`. On another Windows PC:
 
-1. Extract `Agentic-AI-Operator-System-2.0.0-Windows-x64.zip`.
+1. Extract `Agentic-AI-Operator-System-2.1.0-Windows-x64.zip`.
 2. Double-click `INSTALLA.cmd` (administrator rights are not required).
 3. Restart the ChatGPT desktop app or Codex.
 4. Type `/mcp` to verify that the global Windows automation server is connected.

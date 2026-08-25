@@ -11,7 +11,8 @@ Chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Le funzioni 
 - `$collauda-procedura`: esegue il test reale e salva prove e report.
 - `$avvia-procedura`: esegue una procedura per nome.
 - `$modifica-procedura`: modifica procedura, skill, flow e versione.
-- `$visualizza-procedure`: aggiorna e apre il catalogo visuale.
+- `$ottimizza-procedura`: analizza tempi ed errori, prova step sicuri e riduce i tempi misurati.
+- `$visualizza-procedure`: apre il catalogo locale già pronto con esecuzioni, tempi ed errori.
 
 ## Prima procedura
 
@@ -35,4 +36,4 @@ verificato tramite SHA-256 e installato conservando procedure e registrazioni.
 
 ## Prestazioni
 
-Il sistema raggruppa le azioni deterministiche, usa schermate leggere ai checkpoint e richiede analisi strutturali complete soltanto quando la schermata cambia o presenta un bivio. La verifica finale resta obbligatoria.
+Ogni collaudo ed esecuzione salva una run JSON con tempi per step. Gli errori diventano incidenti documentati e lezioni contestuali per evitare recidive. Il sistema raggruppa le azioni deterministiche, usa schermate leggere ai checkpoint e richiede analisi strutturali complete soltanto quando la schermata cambia o presenta un bivio. La verifica finale resta obbligatoria.

@@ -5,7 +5,7 @@ description: Aggiorna una procedura aziendale e il relativo SKILL.md, schema, ri
 
 # Modifica procedura
 
-Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` e leggi `procedure.json`, `SKILL.md` e soltanto i riferimenti coinvolti.
+Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` e leggi `procedure.json`, `SKILL.md`, `experience\lessons.json` e soltanto i riferimenti coinvolti. Conserva run e incidenti storici; se cambi step o selettori, aggiorna esplicitamente l'ambito delle lezioni interessate senza cancellare l'evidenza originale.
 
 1. Applica la richiesta coerentemente a istruzioni, flow, input, condizioni, test e screenshot di riferimento.
 2. Non alterare `recording\`, che conserva la fonte originale. Aggiungi nuove registrazioni come sottocartelle datate.

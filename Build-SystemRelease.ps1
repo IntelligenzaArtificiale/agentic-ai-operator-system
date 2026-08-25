@@ -12,7 +12,7 @@ New-Item -ItemType Directory -Path $releaseRoot|Out-Null
 foreach($directory in 'bundle','payload','runtime','template','third-party-notices'){
     Copy-Item -LiteralPath (Join-Path $source $directory) -Destination $releaseRoot -Recurse
 }
-foreach($file in 'AGENTS.md','Check-AgenticUpdate.ps1','Check-System.ps1','GUIDA-STRUTTURA-PROCEDURE.md','GUIDA-UTENTE.md','INSTALLA.cmd','Install-System.ps1','PACKAGE-MANIFEST.json','PROMPT-INSTALLAZIONE.txt'){
+foreach($file in 'AGENTS.md','Check-AgenticUpdate.ps1','Check-System.ps1','GUIDA-STRUTTURA-PROCEDURE.md','GUIDA-UTENTE.md','INSTALLA.cmd','Install-System.ps1','PACKAGE-MANIFEST.json','PROMPT-INSTALLAZIONE.txt','TELEMETRIA-E-OTTIMIZZAZIONE.md'){
     Copy-Item -LiteralPath (Join-Path $source $file) -Destination $releaseRoot
 }
 Compress-Archive -LiteralPath $releaseRoot -DestinationPath $zip -CompressionLevel Optimal

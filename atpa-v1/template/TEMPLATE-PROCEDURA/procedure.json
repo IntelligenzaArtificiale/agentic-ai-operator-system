@@ -10,6 +10,14 @@
   "created_at": "",
   "updated_at": "",
   "last_tested_at": "",
+  "telemetry": {
+    "schema_version": 1,
+    "run_count": 0,
+    "successful_runs": 0,
+    "failed_runs": 0,
+    "last_duration_ms": null,
+    "best_duration_ms": null
+  },
   "inputs": [],
   "expected_result": "",
   "flow": {

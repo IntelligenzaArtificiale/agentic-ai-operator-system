@@ -1,7 +1,35 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Agentic AI Operator System</title><style>
-:root{--bg:#07110f;--panel:#0d1b18;--panel2:#11231f;--line:#21443b;--text:#f2f8f6;--muted:#91aaa3;--green:#34d399;--amber:#fbbf24;--red:#fb7185}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0,#12352c 0,transparent 34%),var(--bg);color:var(--text);font:14px/1.5 Inter,Segoe UI,Arial,sans-serif}header{padding:34px clamp(22px,5vw,72px) 24px;border-bottom:1px solid var(--line)}.brand{color:var(--green);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}h1{font-size:clamp(28px,4vw,52px);line-height:1.05;margin:9px 0 10px;max-width:850px}header p{color:var(--muted);max-width:720px;margin:0}.wrap{padding:24px clamp(22px,5vw,72px) 60px}.status,.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:20px}.pill,.stat{background:rgba(13,27,24,.86);border:1px solid var(--line);border-radius:14px;padding:14px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:8px;background:var(--red)}.ok .dot{background:var(--green);box-shadow:0 0 14px var(--green)}.stat strong{font-size:28px;display:block}.stat span,.pill span{color:var(--muted)}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 16px}input,select{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:11px 13px;border-radius:10px;min-width:190px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:14px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;transition:.2s}.card:hover{transform:translateY(-2px);border-color:#397765}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#18332c;color:var(--green);font-size:11px;text-transform:uppercase}.card h3{font-size:19px;margin:13px 0 6px}.card p{color:var(--muted);min-height:42px}.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}dialog{width:min(960px,94vw);max-height:90vh;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:0;box-shadow:0 30px 90px #000b}dialog::backdrop{background:#000a}.detail{padding:25px}.close{float:right;background:none;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:7px 10px;cursor:pointer}.flow{display:flex;gap:8px;align-items:stretch;overflow-x:auto;padding:18px 0}.node{min-width:150px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#102620;position:relative}.node:not(:last-child):after{content:'→';position:absolute;right:-18px;color:var(--green)}.node.condition{border-color:var(--amber)}.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.shots img{width:100%;border-radius:10px;border:1px solid var(--line)}a{color:var(--green)}.empty{color:var(--muted);padding:40px 0}footer{color:var(--muted);padding-top:35px;font-size:12px}@media(max-width:600px){.flow{flex-direction:column}.node:not(:last-child):after{content:'↓';right:auto;bottom:-19px;left:50%}}
-</style></head><body><header><div class="brand">IntelligenzaArtificialeItalia.net</div><h1>Agentic AI<br>Operator System</h1><p>Sistema agentico locale per acquisire, collaudare ed eseguire processi Windows.</p></header><main class="wrap"><section id="system" class="status"></section><section id="stats" class="stats"></section><div class="toolbar"><input id="q" placeholder="Cerca procedura o ruolo"><select id="department"><option value="">Tutti i reparti</option></select><select id="status"><option value="">Tutti gli stati</option><option>draft</option><option>validated</option><option>active</option></select></div><section id="grid" class="grid"></section><footer>Agentic AI Operator System · Alessandro Ciciarelli · Fondatore di Intelligenza Artificiale Italia</footer></main><dialog id="detail"><div class="detail"><button class="close" onclick="detail.close()">Chiudi</button><div id="detailBody"></div></div></dialog><script src="data.js"></script><script>
-const d=window.ATPA_DATA||{system:{},counts:{},procedures:[]};const labels={chatgpt:'ChatGPT',codex:'Codex',mcp:'MCP Windows',plugin:'Sistema',recorder:'Registratore'};system.innerHTML=Object.entries(labels).map(([k,v])=>`<div class="pill ${d.system[k]?'ok':''}"><i class="dot"></i><b>${v}</b><br><span>${d.system[k]?'Operativo':'Non rilevato'}</span></div>`).join('');stats.innerHTML=[['Totali',d.counts.total],['Bozze',d.counts.draft],['Collaudate',d.counts.validated],['Attive',d.counts.active]].map(x=>`<div class="stat"><strong>${x[1]||0}</strong><span>${x[0]}</span></div>`).join('');
-const deps=[...new Set(d.procedures.map(x=>x.meta.department).filter(Boolean))].sort();department.innerHTML+=""+deps.map(x=>`<option>${x}</option>`).join('');function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function render(){const query=q.value.toLowerCase(),dep=department.value,st=status.value;const a=d.procedures.filter(x=>{const m=x.meta,h=[m.name,m.description,m.department,m.category,...(m.roles||[])].join(' ').toLowerCase();return(!query||h.includes(query))&&(!dep||m.department===dep)&&(!st||m.status===st)});grid.innerHTML=a.length?a.map((x,i)=>`<article class="card" onclick="show('${esc(x.meta.slug)}')"><span class="badge">${esc(x.meta.status)}</span><h3>${esc(x.meta.name)}</h3><p>${esc(x.meta.description)}</p><div class="meta"><span>${esc(x.meta.department||'Senza reparto')}</span><span>v${esc(x.meta.version)}</span></div></article>`).join(''):'<div class="empty">Nessuna procedura corrispondente.</div>'}function show(slug){const x=d.procedures.find(x=>x.meta.slug===slug),m=x.meta,n=(m.flow&&m.flow.nodes)||[];detailBody.innerHTML=`<div class="brand">${esc(m.category||'Procedura')}</div><h2>${esc(m.name)}</h2><p>${esc(m.description)}</p><p><b>Reparto:</b> ${esc(m.department||'—')} · <b>Ruoli:</b> ${esc((m.roles||[]).join(', ')||'—')} · <b>Versione:</b> ${esc(m.version)}</p><h3>Flusso operativo</h3><div class="flow">${n.length?n.map(y=>`<div class="node ${y.type==='condition'?'condition':''}"><b>${esc(y.label)}</b><br><small>${esc(y.description||'')}</small></div>`).join(''):'<span class="empty">Diagramma non ancora definito.</span>'}</div><h3>Riferimenti visivi</h3><div class="shots">${(x.screenshots||[]).map(s=>`<img src="${s}">`).join('')||'<span class="empty">Nessuno screenshot catalogato.</span>'}</div><p><a href="${x.folder_uri}">Apri cartella procedura</a></p>`;detail.showModal()}q.oninput=department.onchange=status.onchange=render;render();
-</script></body></html>
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Agentic AI Operator System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="brand">IntelligenzaArtificialeItalia.net</div>
+    <h1>Agentic AI<br>Operator System</h1>
+    <p>Procedure, prestazioni ed esperienza operativa in un unico catalogo locale.</p>
+  </header>
+  <main class="wrap">
+    <section id="system" class="status"></section>
+    <section id="stats" class="stats"></section>
+    <div class="toolbar">
+      <input id="q" placeholder="Cerca procedura o ruolo">
+      <select id="department"><option value="">Tutti i reparti</option></select>
+      <select id="status"><option value="">Tutti gli stati</option><option>draft</option><option>validated</option><option>active</option></select>
+    </div>
+    <section id="grid" class="grid"></section>
+    <footer>Agentic AI Operator System · Alessandro Ciciarelli · Intelligenza Artificiale Italia</footer>
+  </main>
+  <dialog id="detail">
+    <div class="detail">
+      <button id="close-detail" class="close">Chiudi</button>
+      <div id="detailBody"></div>
+    </div>
+  </dialog>
+  <script src="data.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

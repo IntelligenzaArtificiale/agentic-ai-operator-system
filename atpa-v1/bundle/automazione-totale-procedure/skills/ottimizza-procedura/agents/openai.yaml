@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ottimizza procedura"
+  short_description: "Riduce i tempi senza effetti produttivi"
+  default_prompt: "Usa $ottimizza-procedura per analizzare e velocizzare una procedura in sicurezza."
