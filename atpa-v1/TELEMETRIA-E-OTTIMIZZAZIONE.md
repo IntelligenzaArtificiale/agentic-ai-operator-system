@@ -10,14 +10,13 @@ Questa separazione evita che un errore transitorio riscriva subito una procedura
 La skill `$ottimizza-procedura` usa le run come baseline, prova soltanto passaggi
 senza effetti produttivi e modifica il flusso quando il vantaggio è verificato.
 
-## Esperimento Gmail del 25 agosto 2026
+## Criterio di validità
 
-Il collaudo reale ha evidenziato tre incidenti: digitazione senza target esplicito,
-inserimento del corpo dentro una firma HTML e timeout del toast di invio. Il
-recupero ha usato target espliciti, sostituzione completa del corpo e verifica
-nella cartella Inviati.
+Una run è utilizzabile come baseline soltanto quando il risultato è verificato con
+una prova persistente e specifica. Per un'email questo richiede di aprire il
+messaggio da Inviati e controllare destinatario, oggetto e un marcatore del corpo.
+Toast, chiusura del composer e presenza del solo oggetto non sono sufficienti.
 
-- prima esecuzione esplorativa: circa 86 secondi;
-- esecuzione ottimizzata: circa 21,6 secondi;
-- riduzione misurata: circa 75%;
-- checkpoint critici conservati: verifica bozza e verifica in Inviati.
+Il test Gmail del 25 agosto 2026 è stato invalidato perché non ha dimostrato
+destinatario e invio. Le durate precedentemente riportate non costituiscono un
+benchmark e non devono essere usate dall'ottimizzatore.

@@ -19,6 +19,12 @@ Apri una run con modalità `test` e usa lo schema in
 - Esegui prima il caso normale, quindi le sole eccezioni che possono essere provate senza conseguenze indesiderate.
 - Minimizza token e round trip senza ridurre l'affidabilità: preferisci azioni deterministiche e batch soltanto in un contesto stabile; `Screenshot` ai checkpoint; `Snapshot` solo per rimappare elementi o leggere struttura; riusa lo stato stabile; evita di rileggere registrazioni e immagini storiche.
 - Dopo un'azione senza cambiamento visibile, acquisisci stato fresco e correggi al massimo due volte. Non dichiarare successo dal solo esito del tool.
+- Per ogni effetto esterno osserva prima dell'azione tutti i campi critici e salva
+  una prova strutturata. Dopo l'azione verifica un artefatto persistente nel sistema
+  di destinazione: toast, chiusura del composer o cambio schermata non bastano. Per
+  un'email apri il messaggio da Inviati e verifica destinatario, oggetto e un
+  marcatore univoco del corpo. Se manca questa prova, usa esito `unverified`, non
+  ritentare automaticamente e non validare la procedura.
 - Misura inizio, fine e durata di ogni step logico, con tentativi e verifica.
 - Per ogni errore, ferma la sequenza, osserva stato fresco, recupera in sicurezza,
   aggiungi l'incidente a `experience\errors.jsonl` e alla run. Registra bersaglio o

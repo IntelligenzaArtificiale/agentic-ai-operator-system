@@ -5,7 +5,7 @@ description: Analizza telemetria, errori e lezioni di una procedura aziendale, p
 
 # Ottimizza procedura
 
-Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` e leggi `procedure.json`, `SKILL.md`, `references\telemetry-schema.md`, tutte le run valide e `experience\lessons.json`. Usa gli incidenti grezzi soltanto per approfondire anomalie già individuate.
+Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` e leggi `procedure.json`, `SKILL.md`, `references\telemetry-schema.md`, tutte le run valide e `experience\lessons.json`. Usa gli incidenti grezzi soltanto per approfondire anomalie già individuate. Una run è valida per una baseline soltanto se ha `outcome: succeeded`, `verification_status: verified` e prove coerenti con i criteri di successo.
 
 ## Analisi
 
@@ -33,9 +33,12 @@ ambiente test o una simulazione e fermati prima dell'azione finale. Non inventar
 destinatari o dati di produzione.
 
 Ogni prova crea una run `optimization` con tempi per step e indica chiaramente se
-è simulata. Confronta il candidato con la baseline usando lo stesso criterio di
-successo. Accetta una modifica solo se il risultato è verificato, non aumenta i
-retry e produce un miglioramento significativo o una semplificazione dimostrabile.
+è simulata. Una simulazione non è confrontabile numericamente con una run reale e
+non può produrre percentuali di miglioramento. Confronta il candidato con la
+baseline usando lo stesso criterio di successo e lo stesso livello di effetto.
+Accetta una modifica solo se il risultato è verificato con prova persistente, non
+aumenta i retry e produce un miglioramento significativo o una semplificazione
+dimostrabile. Se la verifica è dubbia, marca `unverified` e scarta il campione.
 
 ## Aggiornamento
 

@@ -1,6 +1,6 @@
 {
   "name": "Agentic AI Operator System",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "author": "Alessandro Ciciarelli",
   "organization": "Intelligenza Artificiale Italia",
   "website": "https://intelligenzaartificialeitalia.net",
@@ -8,8 +8,8 @@
   "components": {
     "windows_control_engine": "0.8.5",
     "procedure_recorder": "OpenSteps 0.1.0",
-    "plugin": "2.1.0",
-    "telemetry_schema": 1,
+    "plugin": "2.1.1",
+    "telemetry_schema": 2,
     "experience_memory": 1
   },
   "repository": "https://github.com/IntelligenzaArtificiale/agentic-ai-operator-system",

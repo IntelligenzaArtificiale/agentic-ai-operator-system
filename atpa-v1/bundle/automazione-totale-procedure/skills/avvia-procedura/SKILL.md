@@ -44,6 +44,23 @@ Usa esclusivamente `windows-mcp` per il desktop. Ottimizza l'esecuzione:
 - massimo due tentativi correttivi basati su stato fresco;
 - il risparmio di token non giustifica mai un'azione ambigua, un contesto non verificato o un workaround più fragile dell'interazione diretta.
 
+## Prova obbligatoria degli effetti esterni
+
+Per email, pubblicazioni, pagamenti, modifiche gestionali e altri effetti esterni:
+
+1. prima dell'azione finale osserva e registra i campi critici effettivamente
+   presenti nell'interfaccia, inclusi destinatario o record, contenuto e account;
+2. dopo l'azione acquisisci stato fresco e verifica un artefatto persistente nel
+   sistema di destinazione. Chiusura della finestra, toast, cambio pagina ed esito
+   del tool non sono prove sufficienti;
+3. per un'email apri il messaggio dalla cartella Inviati e verifica almeno
+   destinatario, oggetto e un marcatore univoco del corpo;
+4. se la prova indipendente non è disponibile, imposta step e run a `unverified`,
+   registra l'incidente e non ripetere automaticamente l'effetto esterno.
+
+Solo una run `succeeded` con `verification_status: verified` può incrementare i
+successi o alimentare confronti prestazionali.
+
 Raccogli gli input necessari, esegui, verifica il risultato finale, aggiorna le
 statistiche `telemetry` in `procedure.json` e rigenera il dashboard. Non affermare
 mai un risultato non osservato.

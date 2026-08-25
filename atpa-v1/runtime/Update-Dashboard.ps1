@@ -47,10 +47,11 @@ function Read-IncidentCount([string]$ProcedurePath){
 }
 
 function Get-Metrics([array]$Runs,[int]$IncidentCount){
-    $completed=@($Runs|Where-Object{$_.outcome -in @('succeeded','failed')})
-    $durations=@($completed|ForEach-Object{[double]$_.duration_ms})
+    $completed=@($Runs|Where-Object{$_.outcome -in @('succeeded','failed','unverified','cancelled')})
+    $verified=@($completed|Where-Object{$_.outcome-eq 'succeeded' -and $_.verification_status-eq 'verified'})
+    $durations=@($verified|ForEach-Object{[double]$_.duration_ms})
     $stepSamples=@{}
-    foreach($run in $completed){
+    foreach($run in $verified){
         foreach($step in @($run.steps)){
             if($null-eq $step.duration_ms){continue}
             $key=if($step.step_id){[string]$step.step_id}else{[string]$step.label}
@@ -63,11 +64,12 @@ function Get-Metrics([array]$Runs,[int]$IncidentCount){
     }|Sort-Object average_duration_ms -Descending|Select-Object -First 5)
     return [ordered]@{
         run_count=$completed.Count
-        successful_runs=@($completed|Where-Object{$_.outcome-eq 'succeeded'}).Count
+        successful_runs=$verified.Count
         failed_runs=@($completed|Where-Object{$_.outcome-eq 'failed'}).Count
+        unverified_runs=@($completed|Where-Object{$_.outcome-eq 'unverified' -or ($_.outcome-eq 'succeeded' -and $_.verification_status-ne 'verified')}).Count
         average_duration_ms=if($durations.Count){[math]::Round(($durations|Measure-Object -Average).Average)}else{$null}
         best_duration_ms=if($durations.Count){[math]::Round(($durations|Measure-Object -Minimum).Minimum)}else{$null}
-        last_duration_ms=if($completed.Count){[math]::Round([double]$completed[-1].duration_ms)}else{$null}
+        last_duration_ms=if($verified.Count){[math]::Round([double]$verified[-1].duration_ms)}else{$null}
         incident_count=$IncidentCount
         slowest_steps=$slow
     }
@@ -99,10 +101,11 @@ if(Test-Path -LiteralPath $proceduresPath){
 }
 $allMetrics=@($items|ForEach-Object{$_.metrics})
 $allDurations=@($allMetrics|Where-Object{$null-ne $_.average_duration_ms}|ForEach-Object{[double]$_.average_duration_ms})
-$totalRuns=0;$totalSuccessful=0;$totalIncidents=0
+$totalRuns=0;$totalSuccessful=0;$totalUnverified=0;$totalIncidents=0
 foreach($metrics in $allMetrics){
     $totalRuns+=[int]$metrics.run_count
     $totalSuccessful+=[int]$metrics.successful_runs
+    $totalUnverified+=[int]$metrics.unverified_runs
     $totalIncidents+=[int]$metrics.incident_count
 }
 $counts=[ordered]@{
@@ -112,11 +115,12 @@ $counts=[ordered]@{
     active=@($items|Where-Object{$_.meta.status-eq 'active'}).Count
     runs=$totalRuns
     successful_runs=$totalSuccessful
+    unverified_runs=$totalUnverified
     incidents=$totalIncidents
     average_duration_ms=if($allDurations.Count){[math]::Round(($allDurations|Measure-Object -Average).Average)}else{$null}
 }
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.1.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.1.1';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     counts=$counts;procedures=$items
 }

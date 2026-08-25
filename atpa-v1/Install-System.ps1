@@ -62,7 +62,7 @@ $updaterSource=Join-Path $packageRoot 'Check-AgenticUpdate.ps1'
 if(-not(Test-Path -LiteralPath $updaterSource)){throw 'Pacchetto incompleto: Check-AgenticUpdate.ps1'}
 Copy-Item -LiteralPath $updaterSource -Destination $programRoot -Force
 Write-Utf8 (Join-Path $programRoot 'update-settings.json') (@{update_manifest_url=$UpdateManifestUrl}|ConvertTo-Json)
-Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.1.0';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
+Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.1.1';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
 $recorderRoot=Join-Path $programRoot 'OpenSteps\0.1.0'
 if(-not(Test-Path -LiteralPath $recorderRoot)){New-Item -ItemType Directory -Force -Path $recorderRoot|Out-Null;Expand-Archive -LiteralPath $recorderArchive -DestinationPath $recorderRoot}
 $recorderExe=Get-ChildItem -LiteralPath $recorderRoot -Filter OpenSteps.App.exe -Recurse -File|Select-Object -First 1
@@ -83,7 +83,7 @@ Copy-Item -Path (Join-Path $packageRoot 'template\TEMPLATE-PROCEDURA\*') -Destin
 Copy-Item -LiteralPath (Join-Path $packageRoot 'GUIDA-UTENTE.md') -Destination (Join-Path $procedureRoot 'GUIDA-UTENTE.md') -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'GUIDA-STRUTTURA-PROCEDURE.md') -Destination (Join-Path $procedureRoot 'GUIDA-STRUTTURA-PROCEDURE.md') -Force
 
-# Migrazione telemetria per procedure create prima della versione 2.1.0.
+# Migrazione telemetria per procedure create prima della versione 2.1.1.
 $proceduresPath=Join-Path $procedureRoot 'procedure'
 Get-ChildItem -LiteralPath $proceduresPath -Directory -ErrorAction SilentlyContinue|ForEach-Object{
     $procedurePath=$_.FullName
@@ -96,7 +96,9 @@ Get-ChildItem -LiteralPath $proceduresPath -Directory -ErrorAction SilentlyConti
     $metaPath=Join-Path $procedurePath 'procedure.json'
     if(Test-Path -LiteralPath $metaPath){
         $meta=Get-Content -Raw -LiteralPath $metaPath|ConvertFrom-Json
-        if(-not $meta.telemetry){$meta|Add-Member -NotePropertyName telemetry -NotePropertyValue ([pscustomobject]@{schema_version=1;run_count=0;successful_runs=0;failed_runs=0;last_duration_ms=$null;best_duration_ms=$null})}
+        if(-not $meta.telemetry){$meta|Add-Member -NotePropertyName telemetry -NotePropertyValue ([pscustomobject]@{schema_version=2;run_count=0;successful_runs=0;failed_runs=0;unverified_runs=0;last_duration_ms=$null;best_duration_ms=$null})}
+        elseif(-not $meta.telemetry.PSObject.Properties['unverified_runs']){$meta.telemetry|Add-Member -NotePropertyName unverified_runs -NotePropertyValue 0}
+        $meta.telemetry.schema_version=2
         Write-Utf8 $metaPath ($meta|ConvertTo-Json -Depth 30)
     }
     $schemaSource=Join-Path $templateTarget 'references\telemetry-schema.md'
@@ -123,11 +125,11 @@ $dashboardScript=Join-Path $programRoot 'Update-Dashboard.ps1'
 & $dashboardScript -ProcedureRoot $procedureRoot | Out-Null
 $mcpText=& $codex mcp get windows-mcp 2>$null|Out-String
 $pluginText=& $codex plugin list 2>$null|Out-String
-$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.1.0';mcp_configured=($mcpText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $procedureRoot 'catalogo\index.html'));procedure_root=$procedureRoot;restart_required=$true}
+$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.1.1';mcp_configured=($mcpText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $procedureRoot 'catalogo\index.html'));procedure_root=$procedureRoot;restart_required=$true}
 $result.ok=$result.mcp_configured -and $result.plugin_installed -and $result.opensteps_installed -and $result.updater_installed -and $result.dashboard_ready
 $out=if($ResultPath){$ResultPath}else{Join-Path $packageRoot 'INSTALL_RESULT.json'};Write-Utf8 $out ($result|ConvertTo-Json -Depth 6)
 if(-not $result.ok){throw "Verifica fallita. Leggi $out"}
 if(-not $NonInteractive){& $dashboardScript -ProcedureRoot $procedureRoot -Open|Out-Null}
-Write-Host 'Agentic AI Operator System 2.1.0 installato correttamente.'
+Write-Host 'Agentic AI Operator System 2.1.1 installato correttamente.'
 Write-Host "Risultato: $out"
 Write-Host 'Chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Il sistema e pronto per la prima procedura.'
