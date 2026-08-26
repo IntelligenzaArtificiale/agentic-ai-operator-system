@@ -11,11 +11,10 @@
 - [x] Telemetry separates action, wait, observation, verification and recovery.
 - [x] Installer registers the local procedure runner and migrates old procedures.
 - [x] Dashboard exposes compiled-plan state and AI intervention metrics.
-- [ ] Tests, installation, commit and release complete successfully.
+- [x] Tests, installation, commit and release complete successfully.
 
 ## Current
 
 - Completed: procedure-runner and execution-plan schema.
 - Completed: skill lifecycle, telemetry, migration, dashboard and runner transport tests.
-- Completed: release build, tests and end-to-end installation.
-- In progress: commit, push and GitHub release publication.
+- Completed: release build, tests, end-to-end installation, commit, push and GitHub release 2.2.0.
