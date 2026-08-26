@@ -5,6 +5,11 @@ description: Controlla applicazioni e desktop Windows attraverso Windows-MCP con
 
 # Controllo Windows efficiente
 
+Quando una procedura possiede un `execution-plan.json` in stato `compiled`, non
+reinterpretare i blocchi deterministici: delegali al MCP `procedure-runner`. Usa
+Windows-MCP per esplorazione, blocchi cognitivi, checkpoint di rischio, guardie
+fallite e rimappatura.
+
 Usa gli strumenti nativi `windows-mcp` per l'intero flusso. Non passare a Browser, Chrome, Computer Use o script di mouse se Windows-MCP è disponibile.
 
 Prima di ogni gruppo di azioni, rendi certo il contesto destinatario: applicazione e finestra corrette, vista o documento corretto e controllo pronto a ricevere input. Non assumere che il focus o il contenuto precedente siano quelli desiderati. Quando si cambia destinazione, usa un'azione esplicita e idempotente che sostituisca lo stato precedente invece di concatenarsi accidentalmente ad esso.

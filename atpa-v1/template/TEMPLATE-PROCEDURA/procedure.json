@@ -11,13 +11,15 @@
   "updated_at": "",
   "last_tested_at": "",
   "telemetry": {
-    "schema_version": 2,
+    "schema_version": 3,
     "run_count": 0,
     "successful_runs": 0,
     "failed_runs": 0,
     "unverified_runs": 0,
     "last_duration_ms": null,
-    "best_duration_ms": null
+    "best_duration_ms": null,
+    "ai_interventions": 0,
+    "deterministic_blocks": 0
   },
   "inputs": [],
   "expected_result": "",

@@ -10,7 +10,13 @@ la chiusura della run e contiene:
 - `steps[]`: `step_id`, `label`, timestamp iniziale/finale, `duration_ms`,
   `outcome`, `attempts`, `verification`, `side_effect_level` e note;
 - `incidents[]`: identificativi degli errori avvenuti nella run;
-- `metrics`: chiamate tool, retry, correzioni e checkpoint.
+- `metrics`: chiamate tool, retry, correzioni, checkpoint, `ai_interventions`,
+  `deterministic_blocks` e tempi separati `action_ms`, `wait_ms`,
+  `ai_observation_ms`, `verification_ms`, `recovery_ms`. I tempi non sovrapposti
+  devono ricomporre la durata totale entro la tolleranza dell'orologio.
+
+Lo schema corrente della run è `schema_version: 3`. Ogni step indica anche
+`executor` (`deterministic` o `ai`) e, quando applicabile, `block_id` del piano.
 
 Una prova di effetto esterno deve descrivere l'artefatto persistente controllato e
 i campi critici osservati. Toast, chiusura di finestre, navigazione e risposta del

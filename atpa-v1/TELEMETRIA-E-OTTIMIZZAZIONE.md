@@ -1,5 +1,10 @@
 # Telemetria, esperienza e ottimizzazione
 
+La telemetria 3 separa tempo di azione locale, attesa, osservazione IA, verifica e
+recupero. Le procedure attraversano `exploratory`, `stabilizing`,
+`compiled_candidate`, `compiled` e `degraded`. Solo run pulite e confrontabili
+promuovono un piano; una guardia fallita riattiva l'IA sulla sola porzione instabile.
+
 Il sistema conserva tre livelli separati:
 
 1. `runs/*.json`: fatti immutabili di ogni esecuzione, con tempi per step.
@@ -13,10 +18,7 @@ senza effetti produttivi e modifica il flusso quando il vantaggio è verificato.
 ## Criterio di validità
 
 Una run è utilizzabile come baseline soltanto quando il risultato è verificato con
-una prova persistente e specifica. Per un'email questo richiede di aprire il
-messaggio da Inviati e controllare destinatario, oggetto e un marcatore del corpo.
-Toast, chiusura del composer e presenza del solo oggetto non sono sufficienti.
-
-Il test Gmail del 25 agosto 2026 è stato invalidato perché non ha dimostrato
-destinatario e invio. Le durate precedentemente riportate non costituiscono un
-benchmark e non devono essere usate dall'ottimizzatore.
+una prova persistente e specifica nel sistema di destinazione. Feedback transitori,
+chiusura di una vista, navigazione o successo tecnico del tool non sono sufficienti.
+Le durate di run prive di questa prova non sono benchmark e l'ottimizzatore deve
+escluderle dai confronti.

@@ -5,7 +5,7 @@ description: Esegue per nome una procedura aziendale già creata usando Windows-
 
 # Avvia procedura
 
-Trova la procedura per nome o slug sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`. Leggi prima `procedure.json`, il suo `SKILL.md` e `experience\lessons.json`; carica riferimenti, incidenti storici ed eccezioni solo quando diventano rilevanti. Avvisa se lo stato non è `validated` o `active` e chiedi conferma prima di eseguire una bozza.
+Trova la procedura per nome o slug sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`. Leggi prima `procedure.json`, `execution-plan.json`, il suo `SKILL.md` e `experience\lessons.json`; carica riferimenti, incidenti storici ed eccezioni solo quando diventano rilevanti. Avvisa se lo stato non è `validated` o `active` e chiedi conferma prima di eseguire una bozza.
 
 ## Run e memoria operativa
 
@@ -31,13 +31,27 @@ Quando un'azione produce uno stato errato o inatteso:
 Non memorizzare segreti. Non considerare errore un'attesa normale o un cambiamento
 UI già gestito; non trasformare un singolo evento transitorio in una regola rigida.
 
-Usa esclusivamente `windows-mcp` per il desktop. Ottimizza l'esecuzione:
+## Esecuzione compilata
+
+Se il piano è `compiled`, esegui ogni blocco `deterministic` con
+`procedure-runner.ExecuteBlock`, passando soltanto le variabili dichiarate. Questo
+è il percorso predefinito: non acquisire screenshot intermedi e non reinterpretare
+azioni già stabilizzate. Passa `allow_external_effects: true` soltanto quando la
+run richiesta autorizza quell'effetto.
+
+Intervieni con l'IA esclusivamente per blocchi `ai`, checkpoint proporzionati al
+rischio, esito finale o ritorno `requires_ai`. Se fallisce una guardia, interrompi,
+marca il piano `degraded`, osserva con `windows-mcp`, recupera in sicurezza e
+registra la rimappatura come nuova esperienza. Non improvvisare il resto del piano.
+
+Se il piano non è compilato, usa `windows-mcp` in modalità adattiva e registra dati
+utili alla stabilizzazione. Ottimizza l'esecuzione:
 
 - prima di digitare o cliccare, assicurati che applicazione, finestra, vista e controllo di destinazione siano quelli previsti; quando cambi contesto, usa un'azione esplicita che sostituisca eventuale contenuto precedente;
 - pilota normalmente l'interfaccia dell'applicazione e non aprire terminali o shell come scorciatoia, salvo che siano parte della procedura o un fallback necessario e appropriato dopo verifica;
 - azioni meccaniche, scorciatoie, input completi e batch prima del ragionamento visuale;
 - un singolo checkpoint per una sequenza deterministica senza bivi;
-- `Screenshot` per osservazione veloce e verifica; `Snapshot` solo quando serve identificare controlli, testo, DOM o rimappare una schermata cambiata;
+- `Screenshot` per checkpoint necessari; `Snapshot` solo per decisioni cognitive o rimappare una schermata cambiata;
 - riusa label, finestra e mappatura finché lo stato resta coerente;
 - checkpoint immediati per condizioni, errori, conferme, invii e risultati finali;
 - non caricare screenshot storici durante il percorso normale se le istruzioni testuali sono sufficienti;
@@ -46,16 +60,14 @@ Usa esclusivamente `windows-mcp` per il desktop. Ottimizza l'esecuzione:
 
 ## Prova obbligatoria degli effetti esterni
 
-Per email, pubblicazioni, pagamenti, modifiche gestionali e altri effetti esterni:
+Per qualsiasi effetto esterno:
 
 1. prima dell'azione finale osserva e registra i campi critici effettivamente
    presenti nell'interfaccia, inclusi destinatario o record, contenuto e account;
 2. dopo l'azione acquisisci stato fresco e verifica un artefatto persistente nel
    sistema di destinazione. Chiusura della finestra, toast, cambio pagina ed esito
    del tool non sono prove sufficienti;
-3. per un'email apri il messaggio dalla cartella Inviati e verifica almeno
-   destinatario, oggetto e un marcatore univoco del corpo;
-4. se la prova indipendente non è disponibile, imposta step e run a `unverified`,
+3. se la prova indipendente non è disponibile, imposta step e run a `unverified`,
    registra l'incidente e non ripetere automaticamente l'effetto esterno.
 
 Solo una run `succeeded` con `verification_status: verified` può incrementare i

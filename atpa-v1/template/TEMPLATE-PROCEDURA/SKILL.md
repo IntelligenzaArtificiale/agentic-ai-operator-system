@@ -5,4 +5,4 @@ description: Esegue la procedura aziendale descritta in questa directory quando 
 
 # Nome procedura
 
-Definire scopo, input, prerequisiti, percorso normale, condizioni, errori, criteri di successo e strategia di verifica adattiva con Windows-MCP. Prima di ogni gruppo operativo stabilire il contesto destinatario corretto; preferire l'interazione diretta con l'applicazione; aggregare azioni soltanto quando lo stato è stabile e non ambiguo. Prima di eseguire leggere `experience/lessons.json`; durante ogni collaudo o esecuzione salvare tempi per step, incidenti e run secondo `references/telemetry-schema.md`.
+Definire scopo, input, prerequisiti, percorso normale, condizioni, errori e criteri di successo. Leggere `execution-plan.json`: usare `procedure-runner` per blocchi deterministici compilati e Windows-MCP solo per esplorazione, ragionamento, deviazioni e verifiche proporzionate al rischio. Prima di eseguire leggere `experience/lessons.json`; salvare tempi distinti, incidenti e run secondo `references/telemetry-schema.md`.

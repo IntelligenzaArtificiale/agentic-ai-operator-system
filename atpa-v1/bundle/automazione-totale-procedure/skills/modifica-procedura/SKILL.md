@@ -12,6 +12,7 @@ Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\p
 3. Incrementa la versione: patch per correzioni, minor per nuovi passaggi/bivi/input, major per cambiamenti incompatibili.
 4. Imposta `status` a `draft` quando la modifica cambia comportamento o criteri di successo; conserva `validated` solo per correzioni editoriali prive di effetti operativi.
 5. Mantieni il protocollo di efficienza adattiva: contesto destinatario certo prima dell'azione, interazione diretta con l'applicazione, batch solo nello stesso stato stabile, checkpoint significativi, `Screenshot` leggero e `Snapshot` selettivo. Non introdurre workaround da terminale per un risparmio marginale.
-6. Aggiorna `updated_at`, aggiungi una nota in `CHANGELOG.md`, valida struttura e JSON e rigenera il dashboard.
+6. Aggiorna anche `execution-plan.json`: una modifica editoriale lo conserva; una modifica a percorso, target, contesto, input o risultato porta i blocchi coinvolti a riapprendimento e il piano a `stabilizing` o `degraded`. Non mantenere coordinate compilate quando cambia il fingerprint.
+7. Aggiorna `updated_at`, aggiungi una nota in `CHANGELOG.md`, valida struttura e JSON e rigenera il dashboard.
 
 Comunica cosa è cambiato e se è necessario un nuovo collaudo. Non eseguire automaticamente la procedura salvo richiesta esplicita separata.

@@ -1,7 +1,7 @@
 {
   "name": "automazione-totale-procedure",
-  "version": "2.1.1",
-  "description": "Sistema completo per creare, collaudare, eseguire, apprendere e ottimizzare procedure aziendali Windows",
+  "version": "2.2.0",
+  "description": "Sistema per apprendere, compilare ed eseguire procedure Windows con IA solo quando necessaria",
   "author": {
     "name": "Alessandro Ciciarelli",
     "url": "https://intelligenzaartificialeitalia.net"
@@ -10,10 +10,10 @@
   "interface": {
     "displayName": "Agentic AI Operator System",
     "shortDescription": "Crea ed esegue procedure aziendali Windows.",
-    "longDescription": "Sistema agentico locale con telemetria per step, memoria degli errori, ottimizzazione sicura e dashboard delle prestazioni.",
+    "longDescription": "Sistema agentico locale con piani deterministici compilati, IA su deviazioni e decisioni, memoria degli errori, telemetria e dashboard.",
     "developerName": "Alessandro Ciciarelli · Intelligenza Artificiale Italia",
     "category": "Productivity",
-    "capabilities": ["Procedure aziendali", "Automazione Windows", "Memoria errori", "Ottimizzazione", "Dashboard prestazioni"],
+    "capabilities": ["Procedure compilate", "Automazione Windows", "IA adattiva", "Memoria errori", "Ottimizzazione", "Dashboard prestazioni"],
     "websiteURL": "https://intelligenzaartificialeitalia.net",
     "brandColor": "#10B981",
     "defaultPrompt": ["Crea una procedura dalla mia registrazione.", "Guidami nella creazione di una procedura senza registrazione.", "Avvia una procedura aziendale.", "Ottimizza una procedura usando run ed errori precedenti.", "Visualizza il catalogo e le prestazioni."]

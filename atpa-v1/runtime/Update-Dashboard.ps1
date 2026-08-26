@@ -62,6 +62,11 @@ function Get-Metrics([array]$Runs,[int]$IncidentCount){
     $slow=@($stepSamples.Values|ForEach-Object{
         [ordered]@{label=$_.label;samples=$_.values.Count;average_duration_ms=[math]::Round(($_.values|Measure-Object -Average).Average)}
     }|Sort-Object average_duration_ms -Descending|Select-Object -First 5)
+    $aiInterventions=0;$deterministicBlocks=0
+    foreach($run in $completed){
+        if($run.metrics.ai_interventions){$aiInterventions+=[int]$run.metrics.ai_interventions}
+        if($run.metrics.deterministic_blocks){$deterministicBlocks+=[int]$run.metrics.deterministic_blocks}
+    }
     return [ordered]@{
         run_count=$completed.Count
         successful_runs=$verified.Count
@@ -71,6 +76,8 @@ function Get-Metrics([array]$Runs,[int]$IncidentCount){
         best_duration_ms=if($durations.Count){[math]::Round(($durations|Measure-Object -Minimum).Minimum)}else{$null}
         last_duration_ms=if($verified.Count){[math]::Round([double]$verified[-1].duration_ms)}else{$null}
         incident_count=$IncidentCount
+        ai_interventions=$aiInterventions
+        deterministic_blocks=$deterministicBlocks
         slowest_steps=$slow
     }
 }
@@ -93,20 +100,27 @@ if(Test-Path -LiteralPath $proceduresPath){
                 $meta=Get-Content -Raw -LiteralPath $metaPath|ConvertFrom-Json
                 $runs=Read-Runs $_.FullName
                 $metrics=Get-Metrics $runs (Read-IncidentCount $_.FullName)
+                $planStatus='missing';$planBlocks=0
+                $planPath=Join-Path $_.FullName 'execution-plan.json'
+                if(Test-Path -LiteralPath $planPath){
+                    $plan=Get-Content -Raw -LiteralPath $planPath|ConvertFrom-Json
+                    $planStatus=[string]$plan.status;$planBlocks=@($plan.blocks).Count
+                }
                 $shots=@(Get-ChildItem -LiteralPath (Join-Path $_.FullName 'references\screenshots') -File -ErrorAction SilentlyContinue|Select-Object -First 6|ForEach-Object{To-FileUri $_.FullName})
-                $items+=[ordered]@{meta=$meta;metrics=$metrics;path=$_.FullName;folder_uri=(To-FileUri $_.FullName);screenshots=$shots}
+                $items+=[ordered]@{meta=$meta;plan=[ordered]@{status=$planStatus;blocks=$planBlocks};metrics=$metrics;path=$_.FullName;folder_uri=(To-FileUri $_.FullName);screenshots=$shots}
             }catch{}
         }
     }
 }
 $allMetrics=@($items|ForEach-Object{$_.metrics})
 $allDurations=@($allMetrics|Where-Object{$null-ne $_.average_duration_ms}|ForEach-Object{[double]$_.average_duration_ms})
-$totalRuns=0;$totalSuccessful=0;$totalUnverified=0;$totalIncidents=0
+$totalRuns=0;$totalSuccessful=0;$totalUnverified=0;$totalIncidents=0;$totalAi=0
 foreach($metrics in $allMetrics){
     $totalRuns+=[int]$metrics.run_count
     $totalSuccessful+=[int]$metrics.successful_runs
     $totalUnverified+=[int]$metrics.unverified_runs
     $totalIncidents+=[int]$metrics.incident_count
+    $totalAi+=[int]$metrics.ai_interventions
 }
 $counts=[ordered]@{
     total=$items.Count
@@ -117,10 +131,12 @@ $counts=[ordered]@{
     successful_runs=$totalSuccessful
     unverified_runs=$totalUnverified
     incidents=$totalIncidents
+    compiled=@($items|Where-Object{$_.plan.status-eq 'compiled'}).Count
+    ai_interventions=$totalAi
     average_duration_ms=if($allDurations.Count){[math]::Round(($allDurations|Measure-Object -Average).Average)}else{$null}
 }
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.1.1';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.2.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     counts=$counts;procedures=$items
 }

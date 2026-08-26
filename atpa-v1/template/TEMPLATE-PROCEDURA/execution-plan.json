@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "procedure_slug": "nome-procedura",
+  "plan_version": "1.0.0",
+  "status": "exploratory",
+  "variables": [],
+  "environment": {
+    "strategy": "controlled",
+    "fingerprints": []
+  },
+  "promotion": {
+    "minimum_clean_runs": 3,
+    "clean_runs": 0,
+    "maximum_duration_variance": 0.2,
+    "last_evaluated_at": ""
+  },
+  "blocks": []
+}

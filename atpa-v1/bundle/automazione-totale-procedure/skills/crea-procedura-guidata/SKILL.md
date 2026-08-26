@@ -20,9 +20,9 @@ Non creare la directory definitiva prima della conferma. Se l'utente chiede espl
 ## Creazione
 
 1. Copia la struttura di `%USERPROFILE%\Documents\Agentic AI Operator System\TEMPLATE-PROCEDURA` in `procedure\<slug>` senza modificare il template originale; inizializza telemetria, `runs` ed `experience`.
-2. Genera e completa `procedure.json`, `SKILL.md`, `references\procedure.md`, `references\test-cases.md`, `references\screenshots\`, `tests\`, `runs\`, `experience\errors.jsonl`, `experience\lessons.json` e `CHANGELOG.md`. La cartella `recording\` può essere assente o vuota: la procedura non deve dipendere da una registrazione.
+2. Genera e completa `procedure.json`, `execution-plan.json`, `SKILL.md`, `references\procedure.md`, `references\test-cases.md`, `references\screenshots\`, `tests\`, `runs\`, `experience\errors.jsonl`, `experience\lessons.json` e `CHANGELOG.md`. La cartella `recording\` può essere assente o vuota: la procedura non deve dipendere da una registrazione.
 3. Trasforma la descrizione umana in intenzioni e target semantici, non in coordinate inventate. Prima di ogni gruppo operativo stabilisci applicazione, finestra, vista e controllo destinatari; usa l'interazione diretta dell'applicazione e non workaround da terminale.
-4. Inserisci checkpoint significativi, bivi, condizioni di arresto, massimo due tentativi correttivi e una prova osservabile del risultato finale. Raggruppa azioni soltanto nello stesso contesto stabile; l'efficienza non deve ridurre l'affidabilità.
+4. Classifica i passaggi come deterministici, cognitivi o effetti esterni e inizializza il piano come `exploratory`. Inserisci checkpoint significativi, bivi, condizioni di arresto, massimo due tentativi correttivi e una prova osservabile del risultato finale. L'esplorazione scopre le azioni; solo il collaudo può promuoverle a blocchi compilati.
 5. Se un dettaglio dell'interfaccia potrà essere conosciuto solo durante il collaudo, descrivi un passo di individuazione semantica e segnalo tra i punti da verificare; non fabbricare label o coordinate.
 6. Imposta versione `1.0.0` e stato `draft`, compila flow, reparto, categoria e ruoli, quindi valida JSON e struttura. Esegui `Update-Dashboard.ps1` se disponibile.
 7. Comunica path creato, input richiesti, assunzioni confermate e aspetti da collaudare. Non eseguire automaticamente la procedura.
