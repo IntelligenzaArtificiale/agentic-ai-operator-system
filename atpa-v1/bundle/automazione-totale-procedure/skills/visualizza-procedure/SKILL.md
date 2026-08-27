@@ -12,7 +12,7 @@ locale cliccabile e aprilo tramite `windows-mcp`, senza terminale o PowerShell. 
 mancano o `data.js` è più vecchio dell'ultima run, esegui una sola volta lo script
 runtime `Update-Dashboard.ps1`, quindi apri il file.
 
-Il dashboard mostra stato sistema, numero di esecuzioni, successi, errori, durata
+Il dashboard mostra profilo aziendale, stato sistema, numero di esecuzioni, successi, errori, durata
 media e migliore, ultima durata e step più lenti per ogni procedura.
 
 Se lo script non esiste, segnala che l'installazione deve essere riparata. Non ricostruire manualmente il dashboard e non usare Windows-MCP per navigare nella pagina salvo richiesta dell'utente.

@@ -1,5 +1,15 @@
 # Compiled procedure runtime
 
+## Onboarding and company DNA 2.3.0
+
+- [x] Add concise start command with the recommended usage sequence.
+- [x] Add guided company-profile command with verified public research.
+- [x] Store a reusable, provenance-aware company profile.
+- [x] Show company identity and setup state in the local dashboard.
+- [x] Migrate existing installations without overwriting their profile.
+- [x] Validate skills, dashboard, installer, package and local installation.
+- [ ] Commit, push and publish release 2.3.0.
+
 ## Acceptance criteria
 
 - [x] Every procedure includes a compiled execution plan.

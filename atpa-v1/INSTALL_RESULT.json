@@ -1,7 +1,7 @@
 {
     "ok":  true,
     "product":  "Agentic AI Operator System",
-    "version":  "2.2.0",
+    "version":  "2.3.0",
     "mcp_configured":  true,
     "runner_configured":  true,
     "plugin_installed":  true,
@@ -9,6 +9,7 @@
     "updater_installed":  true,
     "update_manifest_url":  "https://github.com/IntelligenzaArtificiale/agentic-ai-operator-system/releases/latest/download/release-manifest.json",
     "dashboard_ready":  true,
+    "company_profile_ready":  true,
     "procedure_root":  "C:\\Users\\alexc\\Documents\\Agentic AI Operator System",
     "restart_required":  true
 }

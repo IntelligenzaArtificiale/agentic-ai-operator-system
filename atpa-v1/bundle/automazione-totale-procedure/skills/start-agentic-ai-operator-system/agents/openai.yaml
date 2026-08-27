@@ -1,0 +1,4 @@
+interface:
+  display_name: "Start Agentic AI Operator System"
+  short_description: "Scopri da dove iniziare e cosa fare dopo"
+  default_prompt: "Usa $start-agentic-ai-operator-system per mostrarmi il percorso iniziale."

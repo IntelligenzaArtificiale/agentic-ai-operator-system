@@ -4,6 +4,19 @@
   const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const duration = milliseconds => milliseconds == null ? '—' : milliseconds < 1000 ? `${milliseconds} ms` : `${(milliseconds / 1000).toFixed(1)} s`;
 
+  function renderCompany() {
+    const company = data.company || {status:'not_configured'};
+    if (company.status !== 'configured') {
+      byId('company').innerHTML = '<div class="brand">Profilo azienda</div><h2>Configura il DNA aziendale</h2><p>Avvia <b>$profilo-azienda</b> per contestualizzare procedure, reparti e strumenti.</p>';
+      return;
+    }
+    const identity = company.identity || {};
+    const business = company.business || {};
+    const operations = company.operations || {};
+    const tags = [...(business.sectors||[]), ...(operations.departments||[])].slice(0, 8);
+    byId('company').innerHTML = `<div class="brand">Profilo azienda</div><h2>${escapeHtml(identity.display_name||identity.legal_name||'Azienda')}</h2><p>${escapeHtml(business.summary||'DNA aziendale configurato.')}</p><div class="company-data">${tags.map(tag=>`<span>${escapeHtml(tag)}</span>`).join('')}<span>${(company.sources||[]).length} fonti</span></div>`;
+  }
+
   function renderSystem() {
     const labels = {chatgpt:'ChatGPT',codex:'Codex',mcp:'MCP Windows',plugin:'Sistema',recorder:'OpenSteps'};
     byId('system').innerHTML = Object.entries(labels).map(([key,label]) => `<div class="pill ${data.system[key]?'ok':''}"><i class="dot"></i><b>${label}</b><br><span>${data.system[key]?'Operativo':'Non rilevato'}</span></div>`).join('');
@@ -37,6 +50,7 @@
   byId('department').innerHTML += departments.map(value => `<option>${escapeHtml(value)}</option>`).join('');
   ['q','department','status'].forEach(id => byId(id).addEventListener(id === 'q' ? 'input' : 'change', renderCards));
   byId('close-detail').addEventListener('click', () => byId('detail').close());
+  renderCompany();
   renderSystem();
   renderCards();
 })();

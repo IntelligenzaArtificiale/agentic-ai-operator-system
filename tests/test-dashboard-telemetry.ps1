@@ -7,6 +7,8 @@ try{
     New-Item -ItemType Directory -Force -Path (Join-Path $procedure 'runs'),(Join-Path $procedure 'experience'),(Join-Path $procedure 'references\screenshots')|Out-Null
     $meta=@{name='Processo test';slug='processo-test';description='Fixture';department='QA';category='Test';roles=@();status='validated';version='1.0.0';flow=@{nodes=@();edges=@()}}
     [IO.File]::WriteAllText((Join-Path $procedure 'procedure.json'),($meta|ConvertTo-Json -Depth 10),$utf8)
+    $company=@{schema_version=1;status='configured';identity=@{display_name='Azienda QA'};business=@{summary='Profilo di prova';sectors=@('Servizi')};operations=@{departments=@('Qualita')};sources=@(@{title='Fonte'})}
+    [IO.File]::WriteAllText((Join-Path $procedureRoot 'company-profile.json'),($company|ConvertTo-Json -Depth 10),$utf8)
     $plan=@{schema_version=1;procedure_slug='processo-test';status='compiled';blocks=@(@{id='work';executor='deterministic';side_effect='none'})}
     [IO.File]::WriteAllText((Join-Path $procedure 'execution-plan.json'),($plan|ConvertTo-Json -Depth 10),$utf8)
     $run1=@{schema_version=3;run_id='run-1';outcome='succeeded';verification_status='verified';duration_ms=4200;metrics=@{ai_interventions=1;deterministic_blocks=2};steps=@(@{step_id='read';label='Leggi elemento';duration_ms=1200})}
@@ -26,6 +28,8 @@ try{
     if($data -notmatch '"compiled":1'){throw 'Piano compilato non contato.'}
     if($data -notmatch '"ai_interventions":1'){throw 'Interventi IA non conteggiati.'}
     if($data -notmatch '"deterministic_blocks":2'){throw 'Blocchi locali non conteggiati.'}
+    if($data -notmatch '"display_name":"Azienda QA"'){throw 'Profilo azienda non incluso.'}
+    if($data -notmatch '"version":"2.3.0"'){throw 'Versione dashboard non corretta.'}
     foreach($asset in 'index.html','styles.css','dashboard.js','data.js'){
         if(-not(Test-Path -LiteralPath (Join-Path $procedureRoot "catalogo\$asset"))){throw "Asset dashboard mancante: $asset"}
     }

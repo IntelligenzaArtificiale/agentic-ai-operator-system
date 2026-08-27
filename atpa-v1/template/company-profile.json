@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "not_configured",
+  "updated_at": "",
+  "identity": {
+    "display_name": "",
+    "legal_name": "",
+    "website": "",
+    "headquarters": ""
+  },
+  "business": {
+    "summary": "",
+    "sectors": [],
+    "business_model": "",
+    "products_services": [],
+    "customers": [],
+    "revenue": {
+      "value": null,
+      "currency": "",
+      "period": "",
+      "status": "unknown"
+    }
+  },
+  "operations": {
+    "departments": [],
+    "main_tools": [],
+    "automation_priorities": []
+  },
+  "sources": [],
+  "notes": []
+}

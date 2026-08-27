@@ -32,7 +32,7 @@ function Find-Codex {
     throw 'Codex CLI non trovato. Installa o aggiorna ChatGPT/Codex prima di continuare.'
 }
 if($env:OS -ne 'Windows_NT' -or -not [Environment]::Is64BitOperatingSystem){throw 'Richiesto Windows 10/11 x64.'}
-foreach($required in @($uv,$wheel,$recorderArchive,(Join-Path $pluginSource '.codex-plugin\plugin.json'),(Join-Path $packageRoot 'runtime\Update-Dashboard.ps1'),(Join-Path $packageRoot 'runtime\procedure-runner\server.py'))){if(-not(Test-Path -LiteralPath $required)){throw "Pacchetto incompleto: $required"}}
+foreach($required in @($uv,$wheel,$recorderArchive,(Join-Path $pluginSource '.codex-plugin\plugin.json'),(Join-Path $packageRoot 'runtime\Update-Dashboard.ps1'),(Join-Path $packageRoot 'runtime\procedure-runner\server.py'),(Join-Path $packageRoot 'template\company-profile.json'))){if(-not(Test-Path -LiteralPath $required)){throw "Pacchetto incompleto: $required"}}
 $codex=Find-Codex
 
 # Motore Windows locale: PyPI per aggiornabilità, wheel incluso come fallback.
@@ -69,7 +69,7 @@ $updaterSource=Join-Path $packageRoot 'Check-AgenticUpdate.ps1'
 if(-not(Test-Path -LiteralPath $updaterSource)){throw 'Pacchetto incompleto: Check-AgenticUpdate.ps1'}
 Copy-Item -LiteralPath $updaterSource -Destination $programRoot -Force
 Write-Utf8 (Join-Path $programRoot 'update-settings.json') (@{update_manifest_url=$UpdateManifestUrl}|ConvertTo-Json)
-Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.2.0';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
+Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.3.0';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
 $recorderRoot=Join-Path $programRoot 'OpenSteps\0.1.0'
 if(-not(Test-Path -LiteralPath $recorderRoot)){New-Item -ItemType Directory -Force -Path $recorderRoot|Out-Null;Expand-Archive -LiteralPath $recorderArchive -DestinationPath $recorderRoot}
 $recorderExe=Get-ChildItem -LiteralPath $recorderRoot -Filter OpenSteps.App.exe -Recurse -File|Select-Object -First 1
@@ -89,6 +89,8 @@ if(-not(Test-Path -LiteralPath $templateTarget)){New-Item -ItemType Directory -P
 Copy-Item -Path (Join-Path $packageRoot 'template\TEMPLATE-PROCEDURA\*') -Destination $templateTarget -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'GUIDA-UTENTE.md') -Destination (Join-Path $procedureRoot 'GUIDA-UTENTE.md') -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'GUIDA-STRUTTURA-PROCEDURE.md') -Destination (Join-Path $procedureRoot 'GUIDA-STRUTTURA-PROCEDURE.md') -Force
+$companyProfile=Join-Path $procedureRoot 'company-profile.json'
+if(-not(Test-Path -LiteralPath $companyProfile)){Copy-Item -LiteralPath (Join-Path $packageRoot 'template\company-profile.json') -Destination $companyProfile}
 
 # Migrazione non distruttiva a telemetria 3 e piano compilabile.
 $proceduresPath=Join-Path $procedureRoot 'procedure'
@@ -143,11 +145,11 @@ $dashboardScript=Join-Path $programRoot 'Update-Dashboard.ps1'
 $mcpText=& $codex mcp get windows-mcp 2>$null|Out-String
 $runnerText=& $codex mcp get procedure-runner 2>$null|Out-String
 $pluginText=& $codex plugin list 2>$null|Out-String
-$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.2.0';mcp_configured=($mcpText-match 'enabled:\s+true');runner_configured=($runnerText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $procedureRoot 'catalogo\index.html'));procedure_root=$procedureRoot;restart_required=$true}
-$result.ok=$result.mcp_configured -and $result.runner_configured -and $result.plugin_installed -and $result.opensteps_installed -and $result.updater_installed -and $result.dashboard_ready
+$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.3.0';mcp_configured=($mcpText-match 'enabled:\s+true');runner_configured=($runnerText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $procedureRoot 'catalogo\index.html'));company_profile_ready=(Test-Path -LiteralPath $companyProfile);procedure_root=$procedureRoot;restart_required=$true}
+$result.ok=$result.mcp_configured -and $result.runner_configured -and $result.plugin_installed -and $result.opensteps_installed -and $result.updater_installed -and $result.dashboard_ready -and $result.company_profile_ready
 $out=if($ResultPath){$ResultPath}else{Join-Path $packageRoot 'INSTALL_RESULT.json'};Write-Utf8 $out ($result|ConvertTo-Json -Depth 6)
 if(-not $result.ok){throw "Verifica fallita. Leggi $out"}
 if(-not $NonInteractive){& $dashboardScript -ProcedureRoot $procedureRoot -Open|Out-Null}
-Write-Host 'Agentic AI Operator System 2.2.0 installato correttamente.'
+Write-Host 'Agentic AI Operator System 2.3.0 installato correttamente.'
 Write-Host "Risultato: $out"
 Write-Host 'Chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Il sistema e pronto per la prima procedura.'

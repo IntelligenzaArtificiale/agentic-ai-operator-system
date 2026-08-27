@@ -136,9 +136,14 @@ $counts=[ordered]@{
     average_duration_ms=if($allDurations.Count){[math]::Round(($allDurations|Measure-Object -Average).Average)}else{$null}
 }
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.2.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.3.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
+    company=[ordered]@{status='not_configured'}
     counts=$counts;procedures=$items
+}
+$companyPath=Join-Path $ProcedureRoot 'company-profile.json'
+if(Test-Path -LiteralPath $companyPath){
+    try{$payload.company=Get-Content -Raw -LiteralPath $companyPath|ConvertFrom-Json}catch{}
 }
 $json=$payload|ConvertTo-Json -Depth 30 -Compress
 [IO.File]::WriteAllText($dataFile,"window.ATPA_DATA=$json;",[Text.UTF8Encoding]::new($false))

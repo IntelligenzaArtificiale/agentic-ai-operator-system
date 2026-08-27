@@ -1,0 +1,4 @@
+interface:
+  display_name: "Profilo azienda"
+  short_description: "Crea il DNA aziendale per le automazioni"
+  default_prompt: "Usa $profilo-azienda per configurare il DNA della mia azienda."

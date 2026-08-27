@@ -5,7 +5,7 @@ description: Trasforma una o più esportazioni del registratore in una procedura
 
 # Crea procedura
 
-Ricevi dall'utente uno o più path esportati dal registratore e il nome della procedura. La radice predefinita è `%USERPROFILE%\Documents\Agentic AI Operator System`.
+Ricevi dall'utente uno o più path esportati dal registratore e il nome della procedura. La radice predefinita è `%USERPROFILE%\Documents\Agentic AI Operator System`. Se `company-profile.json` è configurato, usalo soltanto per contestualizzare reparto, ruoli e strumenti senza dedurre azioni non richieste.
 
 1. Leggi integralmente Markdown, trascrizioni audio, immagini e metadati UI disponibili. Se sono presenti più registrazioni, confrontale e separa invarianti da dati variabili.
 2. Prima di creare file, individua le ambiguità che possono cambiare comportamento, input, bivi, criteri di successo o gestione degli errori. Se ne esistono, poni in chat una sola domanda concreta, attendi la risposta, incorporala e ripeti finché le ambiguità sostanziali sono risolte. Non fare questionari multipli, non inventare risposte e non chiedere dettagli puramente editoriali deducibili dagli asset. Quando utile, proponi nella domanda l'interpretazione più probabile.
