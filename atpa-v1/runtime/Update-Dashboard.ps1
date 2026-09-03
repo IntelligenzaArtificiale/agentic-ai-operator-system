@@ -166,7 +166,7 @@ $counts=[ordered]@{
 $sharedExperience=Read-SharedExperience $ProcedureRoot
 $counts.shared_lessons=$sharedExperience.lessons
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.5.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.5.1';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     company=[ordered]@{status='not_configured'}
     counts=$counts;experience=$sharedExperience;procedures=$items

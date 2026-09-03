@@ -11,7 +11,6 @@ import json
 import os
 from pathlib import Path
 import platform
-import subprocess
 import urllib.error
 import urllib.request
 import uuid
@@ -75,11 +74,13 @@ def _utc(value: str) -> datetime:
 
 
 class LicenseClient:
-    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.5.0"):
+    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.5.1"):
         root = state_dir or Path(os.environ.get("LOCALAPPDATA", Path.home())) / "Intelligenza Artificiale Italia" / "Agentic AI Operator System"
         self.state_dir = Path(root)
         self.state_path = self.state_dir / "license.dat"
         self.install_path = self.state_dir / "install-id"
+        self.device_path = self.state_dir / "device-id"
+        self._device_id_cache: str | None = None
         self.api_url = api_url or os.environ.get("AIOS_LICENSE_API", DEFAULT_API)
         self.version = version
         self.public_key = PINNED_PUBLIC_KEY
@@ -135,18 +136,42 @@ class LicenseClient:
             self.state_path.unlink(missing_ok=True)
 
     def device_id(self) -> str:
+        if self._device_id_cache is not None:
+            return self._device_id_cache
         self.state_dir.mkdir(parents=True, exist_ok=True)
+        if self.device_path.exists():
+            stored = self.device_path.read_text(encoding="ascii").strip().lower()
+            if len(stored) == 64 and all(character in "0123456789abcdef" for character in stored):
+                self._device_id_cache = stored
+                return stored
         if not self.install_path.exists():
             self.install_path.write_text(str(uuid.uuid4()), encoding="ascii")
         install_id = self.install_path.read_text(encoding="ascii").strip()
-        machine_guid = ""
+        machine_guid = self._machine_guid()
+        device_id = hashlib.sha256(f"{PRODUCT}|{machine_guid}|{install_id}".encode()).hexdigest()
         try:
-            command = ["reg", "query", r"HKLM\SOFTWARE\Microsoft\Cryptography", "/v", "MachineGuid"]
-            output = subprocess.run(command, capture_output=True, text=True, timeout=5, check=True).stdout
-            machine_guid = output.split("REG_SZ", 1)[1].strip()
-        except (OSError, subprocess.SubprocessError, IndexError):
-            machine_guid = platform.node()
-        return hashlib.sha256(f"{PRODUCT}|{machine_guid}|{install_id}".encode()).hexdigest()
+            with self.device_path.open("x", encoding="ascii") as file:
+                file.write(device_id)
+        except FileExistsError:
+            persisted = self.device_path.read_text(encoding="ascii").strip().lower()
+            if len(persisted) == 64 and all(character in "0123456789abcdef" for character in persisted):
+                device_id = persisted
+        self._device_id_cache = device_id
+        return device_id
+
+    @staticmethod
+    def _machine_guid() -> str:
+        try:
+            import winreg
+
+            access = winreg.KEY_READ | getattr(winreg, "KEY_WOW64_64KEY", 0)
+            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Cryptography", 0, access) as key:
+                value, _kind = winreg.QueryValueEx(key, "MachineGuid")
+            if str(value).strip():
+                return str(value).strip()
+        except (ImportError, OSError):
+            pass
+        return platform.node() or "unknown-windows-device"
 
     def _refresh(self, state: dict) -> dict:
         response = self._post({"action": "validate", "activation_token": state["activation_token"], "device_id": self.device_id()})

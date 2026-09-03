@@ -59,6 +59,19 @@ def test_activation_is_dpapi_protected_and_valid(tmp_path: Path):
     assert b"activation_token" not in raw
 
 
+def test_device_identity_is_cached_and_persisted(tmp_path: Path, monkeypatch):
+    client = LicenseClient(tmp_path)
+    values = iter(["machine-guid-a", "machine-guid-b"])
+    monkeypatch.setattr(client, "_machine_guid", lambda: next(values))
+    first = client.device_id()
+    assert client.device_id() == first
+
+    reloaded = LicenseClient(tmp_path)
+    monkeypatch.setattr(reloaded, "_machine_guid", lambda: "different-machine-guid")
+    assert reloaded.device_id() == first
+    assert reloaded.device_path.read_text(encoding="ascii") == first
+
+
 def test_tampered_lease_is_rejected(tmp_path: Path):
     client = LicenseClient(tmp_path)
     fake = FakeServer(client)

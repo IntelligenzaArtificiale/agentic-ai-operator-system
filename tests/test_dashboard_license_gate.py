@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import subprocess
 import sys
 import time
@@ -8,9 +9,11 @@ import urllib.error
 import urllib.request
 
 
-def test_dashboard_denies_without_license():
+def test_dashboard_denies_without_license(tmp_path: Path):
     server = Path(__file__).parents[1] / "atpa-v1" / "runtime" / "licensing" / "dashboard_server.py"
-    process = subprocess.Popen([sys.executable, str(server)])
+    environment = os.environ.copy()
+    environment["LOCALAPPDATA"] = str(tmp_path)
+    process = subprocess.Popen([sys.executable, str(server)], env=environment)
     try:
         time.sleep(0.7)
         try:
