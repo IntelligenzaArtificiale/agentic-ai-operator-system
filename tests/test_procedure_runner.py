@@ -26,6 +26,7 @@ class FakeDesktop:
     def shortcut(self, *args): self.calls.append(("shortcut", args))
     def multi_edit(self, *args): self.calls.append(("multi_edit", args))
     def app(self, *args): self.calls.append(("app", args))
+    def paste_text(self, *args): self.calls.append(("paste_text", args))
 
 
 def plan(status="compiled", executor="deterministic", side_effect="none", guards=None):
@@ -88,6 +89,48 @@ class RunnerTests(unittest.TestCase):
         invalid = plan(guards=[])
         with self.assertRaisesRegex(PlanError, "screen_size"):
             validate_plan(invalid)
+
+    def test_insert_text_anchors_before_existing_content_without_clearing(self):
+        candidate = plan()
+        candidate["blocks"][0]["actions"] = [{
+            "op": "insert_text",
+            "loc": [10, 20],
+            "anchor": "document_start",
+            "text": "{{value}}\n\n",
+        }]
+        desktop = FakeDesktop()
+
+        result = ProcedureRunner(desktop).execute_block(candidate, "work", {"value": "dynamic"})
+
+        self.assertEqual(result["outcome"], "succeeded")
+        self.assertEqual(
+            [call[0] for call in desktop.calls],
+            ["state", "click", "shortcut", "paste_text"],
+        )
+        self.assertEqual(desktop.calls[2][1][0], "ctrl+home")
+        self.assertEqual(desktop.calls[3][1][0], "dynamic\n\n")
+
+    def test_insert_text_rejects_unknown_anchor(self):
+        candidate = plan()
+        candidate["blocks"][0]["actions"] = [{
+            "op": "insert_text",
+            "loc": [10, 20],
+            "anchor": "signature",
+            "text": "{{value}}",
+        }]
+        with self.assertRaisesRegex(PlanError, "insert_text anchor"):
+            validate_plan(candidate)
+
+    def test_insert_text_requires_a_coordinate_pair(self):
+        candidate = plan()
+        candidate["blocks"][0]["actions"] = [{
+            "op": "insert_text",
+            "loc": [10],
+            "anchor": "caret",
+            "text": "{{value}}",
+        }]
+        with self.assertRaisesRegex(PlanError, "insert_text loc"):
+            validate_plan(candidate)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from mcp.types import ToolAnnotations
 from windows_mcp.desktop.service import Desktop
 
 from engine import ProcedureRunner, load_plan
+from experience import prepare_run, validate_run_coverage
 
 
 mcp = FastMCP(
@@ -75,6 +76,31 @@ def execute_block_tool(
         variables,
         allow_external_effects=allow_external_effects,
     )
+    return json.dumps(result, ensure_ascii=False)
+
+
+@mcp.tool(
+    name="PrepareRun",
+    description=(
+        "Builds the mandatory preflight manifest for a procedure: concrete steps, local errors "
+        "grouped by step, local lessons, and matching shared experience."
+    ),
+    annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True),
+)
+def prepare_run_tool(procedure_path: str) -> str:
+    result = prepare_run(Path(procedure_path), procedure_root())
+    return json.dumps(result, ensure_ascii=False)
+
+
+@mcp.tool(
+    name="ValidateRunCoverage",
+    description=(
+        "Checks that every required procedure step was executed or explicitly skipped with a reason."
+    ),
+    annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True),
+)
+def validate_run_coverage_tool(procedure_path: str, run_path: str) -> str:
+    result = validate_run_coverage(Path(procedure_path), Path(run_path), procedure_root())
     return json.dumps(result, ensure_ascii=False)
 
 

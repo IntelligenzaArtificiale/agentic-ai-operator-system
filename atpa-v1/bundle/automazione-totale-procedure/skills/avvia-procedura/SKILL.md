@@ -7,6 +7,12 @@ description: Esegue per nome una procedura aziendale già creata usando Windows-
 
 Trova la procedura per nome o slug sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`. Leggi prima `procedure.json`, `execution-plan.json`, il suo `SKILL.md` e `experience\lessons.json`; carica riferimenti, incidenti storici ed eccezioni solo quando diventano rilevanti. Avvisa se lo stato non è `validated` o `active` e chiedi conferma prima di eseguire una bozza.
 
+Prima di qualsiasi azione chiama `procedure-runner.PrepareRun`. Usa il manifest
+restituito come contratto della run: rileggi la descrizione concreta di ogni step,
+le lezioni locali e gli incidenti raggruppati per `step_id`, oltre alle sole
+esperienze condivise corrispondenti al contesto. Non affidarti al ricordo della
+chat e non omettere o reinterpretare uno step obbligatorio.
+
 ## Run e memoria operativa
 
 Apri una run prima della prima azione e misura con timestamp UTC ogni step logico,
@@ -14,6 +20,12 @@ non ogni singola chiamata interna. Registra in `runs\<run-id>.json` modalità
 `production`, inizio/fine, durata, esito, tentativi, checkpoint e metriche secondo
 `references\telemetry-schema.md`. Aggiorna il file alla fine anche in caso di
 fallimento o interruzione.
+
+Inizializza `planned_steps` dal manifest. Mantieni un cursore sullo step corrente:
+ogni step obbligatorio termina come `succeeded`, `failed` oppure `skipped` con
+`skip_reason`. Prima di dichiarare il risultato chiama
+`procedure-runner.ValidateRunCoverage`; se segnala step mancanti, la run non può
+essere `succeeded`.
 
 Applica preventivamente le lezioni il cui trigger coincide con applicazione,
 schermata e step correnti. Non applicare una lezione fuori contesto.
@@ -27,6 +39,12 @@ Quando un'azione produce uno stato errato o inatteso:
 4. consolida o aggiorna una lezione in `experience\lessons.json` solo se è
    specifica, riproducibile e supportata dall'evidenza;
 5. collega l'incidente alla run e prosegui soltanto se il risultato resta sicuro.
+
+Ogni incidente deve avere `step_id` e, quando esiste, `block_id`; un incidente privo
+di collegamento non è valido. Se la deduzione riguarda il software, una regola
+aziendale o un pattern riusabile oltre questa procedura, registrala anche nella
+memoria condivisa seguendo `references\shared-experience-schema.md`. Nasce
+`candidate`: influenza i controlli, non altera da sola un piano compilato.
 
 Non memorizzare segreti. Non considerare errore un'attesa normale o un cambiamento
 UI già gestito; non trasformare un singolo evento transitorio in una regola rigida.
@@ -50,6 +68,11 @@ utili alla stabilizzazione. Ottimizza l'esecuzione:
 - prima di digitare o cliccare, assicurati che applicazione, finestra, vista e controllo di destinazione siano quelli previsti; quando cambi contesto, usa un'azione esplicita che sostituisca eventuale contenuto precedente;
 - pilota normalmente l'interfaccia dell'applicazione e non aprire terminali o shell come scorciatoia, salvo che siano parte della procedura o un fallback necessario e appropriato dopo verifica;
 - azioni meccaniche, scorciatoie, input completi e batch prima del ragionamento visuale;
+- considera ogni ridisposizione della UI un confine di fase: non usare coordinate
+  precedenti dopo la transizione; preferisci ancore da tastiera o target semantici;
+- assegna a ogni campo un contratto `replace`, `append`, `insert_at_start` o
+  `insert_at_end`; preserva sempre template, firme e testo preesistente non destinato
+  esplicitamente alla sostituzione;
 - un singolo checkpoint per una sequenza deterministica senza bivi;
 - `Screenshot` per checkpoint necessari; `Snapshot` solo per decisioni cognitive o rimappare una schermata cambiata;
 - riusa label, finestra e mappatura finché lo stato resta coerente;

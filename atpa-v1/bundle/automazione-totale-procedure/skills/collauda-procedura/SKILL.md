@@ -7,6 +7,11 @@ description: Collauda una procedura aziendale esistente con Windows-MCP, raccogl
 
 Risolvi il nome nella directory `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`; se più nomi corrispondono, chiedi quale. Leggi `procedure.json`, `execution-plan.json`, `SKILL.md`, `experience\lessons.json` e solo i riferimenti necessari al caso.
 
+Prima di agire chiama `procedure-runner.PrepareRun` e usa il risultato come
+checklist obbligatoria: step concreti, errori locali collegati agli step, lezioni
+locali ed esperienze condivise pertinenti. Inizializza `planned_steps`; nessuno step
+obbligatorio può sparire perché ricordato in modo diverso dalla chat.
+
 Prima del primo collaudo avvisa che può durare più di un'esecuzione normale:
 include osservazioni aggiuntive, analisi degli errori e misurazione di ogni step.
 Apri una run con modalità `test` e usa lo schema in
@@ -28,10 +33,15 @@ Apri una run con modalità `test` e usa lo schema in
 - Per ogni errore, ferma la sequenza, osserva stato fresco, recupera in sicurezza,
   aggiungi l'incidente a `experience\errors.jsonl` e alla run. Registra bersaglio o
   coordinate, azione prevista, risultato errato, causa, recupero e prevenzione.
+- Collega sempre incidente e lezione locale a `step_id` e, se disponibile, a
+  `block_id`. Se la conoscenza è indipendente dalla singola procedura, salvala anche
+  sotto la memoria condivisa `software`, `business` o `patterns` come `candidate`.
 - Aggiorna `experience\lessons.json` soltanto con lezioni contestuali e dimostrate;
   applicale nei passaggi successivi e nei collaudi futuri.
 - Salva in `tests\<timestamp>-report.md` esito, durata, input mascherati quando opportuno, checkpoint verificati, errori e screenshot finali utili; salva sempre anche `runs\<run-id>.json`.
 - Se tutti i criteri risultano verificati, imposta `status` a `validated` e aggiorna `last_tested_at`; altrimenti lascia `draft` e registra il motivo.
+- Prima dell'esito finale chiama `procedure-runner.ValidateRunCoverage`. Uno step
+  obbligatorio è coperto solo se eseguito oppure saltato con motivazione esplicita.
 - Aggiorna le statistiche `telemetry` in `procedure.json` e rigenera il dashboard.
   Non rendere attiva una procedura non validata.
 - Se una guardia compilata fallisce, imposta il piano `degraded`, registra la causa

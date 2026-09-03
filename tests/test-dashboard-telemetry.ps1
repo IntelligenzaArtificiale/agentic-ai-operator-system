@@ -18,6 +18,9 @@ try{
     [IO.File]::WriteAllText((Join-Path $procedure 'runs\run-2.json'),($run2|ConvertTo-Json -Depth 10),$utf8)
     [IO.File]::WriteAllText((Join-Path $procedure 'runs\run-legacy.json'),($legacyFalsePositive|ConvertTo-Json -Depth 10),$utf8)
     [IO.File]::WriteAllText((Join-Path $procedure 'experience\errors.jsonl'),'{"incident_id":"incident-1"}',$utf8)
+    $sharedPath=Join-Path $procedureRoot 'experience\patterns';New-Item -ItemType Directory -Force -Path $sharedPath|Out-Null
+    $shared=@{schema_version=1;lessons=@(@{lesson_id='shared-1';status='candidate'},@{lesson_id='shared-2';status='validated'})}
+    [IO.File]::WriteAllText((Join-Path $sharedPath 'fixture.json'),($shared|ConvertTo-Json -Depth 10),$utf8)
     & (Join-Path $PSScriptRoot '..\atpa-v1\runtime\Update-Dashboard.ps1') -ProcedureRoot $procedureRoot|Out-Null
     $data=Get-Content -Raw -LiteralPath (Join-Path $procedureRoot 'catalogo\data.js')
     if($data -notmatch '"runs":3'){throw "Conteggio run non corretto. Data: $data"}
@@ -28,8 +31,11 @@ try{
     if($data -notmatch '"compiled":1'){throw 'Piano compilato non contato.'}
     if($data -notmatch '"ai_interventions":1'){throw 'Interventi IA non conteggiati.'}
     if($data -notmatch '"deterministic_blocks":2'){throw 'Blocchi locali non conteggiati.'}
+    if($data -notmatch '"shared_lessons":2'){throw 'Esperienze condivise non conteggiate.'}
+    if($data -notmatch '"candidates":1'){throw 'Esperienze candidate non conteggiate.'}
+    if($data -notmatch '"validated":1'){throw 'Esperienze validate non conteggiate.'}
     if($data -notmatch '"display_name":"Azienda QA"'){throw 'Profilo azienda non incluso.'}
-    if($data -notmatch '"version":"2.3.0"'){throw 'Versione dashboard non corretta.'}
+    if($data -notmatch '"version":"2.4.0"'){throw 'Versione dashboard non corretta.'}
     foreach($asset in 'index.html','styles.css','dashboard.js','data.js'){
         if(-not(Test-Path -LiteralPath (Join-Path $procedureRoot "catalogo\$asset"))){throw "Asset dashboard mancante: $asset"}
     }

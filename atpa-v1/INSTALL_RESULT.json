@@ -1,7 +1,7 @@
 {
     "ok":  true,
     "product":  "Agentic AI Operator System",
-    "version":  "2.3.0",
+    "version":  "2.4.0",
     "mcp_configured":  true,
     "runner_configured":  true,
     "plugin_installed":  true,

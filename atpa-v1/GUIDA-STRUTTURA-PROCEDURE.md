@@ -16,6 +16,10 @@ procedure/<slug>/
 └── runs/                       report compatti di esecuzione
 ```
 
+La radice di sistema contiene inoltre `experience/software`,
+`experience/business` ed `experience/patterns`: memoria condivisa selezionata in
+base a `procedure.json > experience_context`, non caricata indiscriminatamente.
+
 ## Stati
 
 - `draft`: nuova o modificata, richiede collaudo.
@@ -28,6 +32,6 @@ Le registrazioni originali non vengono caricate durante l'esecuzione normale. La
 
 ## Metadati catalogo
 
-`company-profile.json` contiene il DNA aziendale globale, le fonti e le priorità di automazione. `procedure.json` contiene nome, slug, descrizione, reparto, categoria, ruoli, stato, versione, date, input, risultato atteso e grafo del flusso. `execution-plan.json` conserva la versione eseguibile: blocchi deterministici locali, blocchi cognitivi, effetti, guardie, fingerprint e stato di apprendimento. Il dashboard legge file e telemetria, senza avviare procedure in background.
+`company-profile.json` contiene il DNA aziendale globale, le fonti e le priorità di automazione. `procedure.json` contiene nome, slug, descrizione, reparto, categoria, ruoli, stato, versione, date, input, risultato atteso, contesto esperienza e grafo del flusso con identificativi stabili. `execution-plan.json` conserva la versione eseguibile: blocchi deterministici locali, blocchi cognitivi, effetti, guardie, fingerprint e stato di apprendimento. Il dashboard legge file e telemetria, senza avviare procedure in background.
 
 Firma editoriale: **Agentic AI Operator System · Alessandro Ciciarelli · Intelligenza Artificiale Italia**.

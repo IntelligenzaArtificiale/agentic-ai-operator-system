@@ -1,6 +1,6 @@
 # Installazione autonoma
 
-Installa **Agentic AI Operator System 2.3.0** su Windows 10/11 x64.
+Installa **Agentic AI Operator System 2.4.0** su Windows 10/11 x64.
 
 1. Leggi integralmente questo file e `GUIDA-UTENTE.md`.
 2. Verifica che lo ZIP sia stato estratto localmente e contenga `payload`, `bundle`, `runtime`, `template` e `Install-System.ps1`.

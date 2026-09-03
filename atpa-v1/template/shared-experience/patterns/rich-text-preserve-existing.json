@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "patterns/rich-text-preserve-existing",
+  "scope": "pattern",
+  "title": "Inserimento in editor con contenuto preesistente",
+  "match": {
+    "applications": [],
+    "departments": [],
+    "categories": [],
+    "patterns": ["rich-text-editor", "preexisting-template"]
+  },
+  "lessons": [
+    {
+      "lesson_id": "preserve-existing-content-by-contract",
+      "status": "candidate",
+      "trigger": "Un campo editabile contiene già template, firma o testo da preservare.",
+      "avoid": "Cancellare l'intero campo o inserire testo rispetto a una coordinata visiva interna.",
+      "preferred_action": "Dichiarare replace, append, insert_at_start o insert_at_end e usare un'ancora deterministica.",
+      "verification": "Prima dell'effetto finale verificare sia il nuovo testo sia il contenuto preesistente da conservare.",
+      "observations": 1,
+      "distinct_procedures": 0,
+      "evidence": ["docs/experiments/2026-08-31-windows-ui-optimization.md"]
+    }
+  ]
+}

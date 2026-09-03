@@ -9,6 +9,9 @@ la chiusura della run e contiene:
   (`verified`, `unverified` o `not_applicable`) e `evidence[]`;
 - `steps[]`: `step_id`, `label`, timestamp iniziale/finale, `duration_ms`,
   `outcome`, `attempts`, `verification`, `side_effect_level` e note;
+- `planned_steps[]`: snapshot iniziale degli step obbligatori restituiti da
+  `PrepareRun`; ogni elemento deve comparire in `steps[]` oppure risultare
+  `skipped` con `skip_reason`;
 - `incidents[]`: identificativi degli errori avvenuti nella run;
 - `metrics`: chiamate tool, retry, correzioni, checkpoint, `ai_interventions`,
   `deterministic_blocks` e tempi separati `action_ms`, `wait_ms`,
@@ -28,8 +31,14 @@ Gli incidenti sono aggiunti come una riga JSON valida in
 `step_id`, `timestamp`, `category`, `target_context`, `intended_action`,
 `observed_error`, `recovery`, `root_cause`, `prevention_rule` e
 `recurrence_key`. Non salvare password, token o contenuti sensibili non necessari.
+`step_id` è obbligatorio e deve corrispondere a un nodo del flow; aggiungi
+`block_id` quando l'incidente avviene in un blocco del piano compilato.
 
 `experience/lessons.json` contiene soltanto lezioni consolidate e riusabili:
 trigger, azione da evitare, azione preferita, verifica richiesta, livello di
 confidenza, numero di osservazioni e ultimo riscontro. Un errore transitorio non
 diventa automaticamente una regola permanente.
+
+Quando un checkpoint pre-effetto blocca un'azione errata, registra l'incidente con
+categoria `pre_effect_guard` e il tempo di recupero. Il tentativo non conta come
+successo né come baseline, anche se il recupero successivo conclude la run.

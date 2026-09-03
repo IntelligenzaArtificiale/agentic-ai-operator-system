@@ -18,4 +18,9 @@ Usa normalmente l'interfaccia dell'applicazione tramite Windows-MCP. Per aprire 
 
 Ottimizza solo dopo aver preservato correttezza: raggruppa azioni deterministiche nello stesso contesto stabile; `Screenshot` per contesto e checkpoint; `Snapshot` solo per struttura UI, label, DOM o rimappatura. Se il costo di un controllo è inferiore al rischio di agire sul bersaglio sbagliato, controlla. Verifica dopo gruppi coerenti e subito nei bivi o nelle azioni critiche. Un tool riuscito non prova che lo stato sia cambiato. Verifica sempre il risultato finale e limita a due i tentativi correttivi basati su stato fresco.
 
+Un input che modifica il layout termina il contesto stabile: non concatenare click
+successivi usando coordinate raccolte prima della modifica. Nei controlli con
+contenuto preesistente stabilisci prima se devi sostituire, aggiungere o inserire a
+un'estremità; usa ancore da tastiera per preservare il contenuto non coinvolto.
+
 Per le procedure catalogate, usa le skill centrali invece di improvvisare il flusso.

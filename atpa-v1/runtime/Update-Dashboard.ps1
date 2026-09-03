@@ -46,6 +46,23 @@ function Read-IncidentCount([string]$ProcedurePath){
     }).Count
 }
 
+function Read-SharedExperience([string]$Root){
+    $result=[ordered]@{files=0;lessons=0;candidates=0;validated=0}
+    $path=Join-Path $Root 'experience'
+    if(-not(Test-Path -LiteralPath $path)){return $result}
+    Get-ChildItem -LiteralPath $path -Filter '*.json' -Recurse -File -ErrorAction SilentlyContinue|Where-Object{$_.Name-ne 'index.json'}|ForEach-Object{
+        try{
+            $document=Get-Content -Raw -LiteralPath $_.FullName|ConvertFrom-Json
+            $result.files++
+            foreach($lesson in @($document.lessons)){
+                $result.lessons++
+                if($lesson.status-eq 'validated'){$result.validated++}else{$result.candidates++}
+            }
+        }catch{}
+    }
+    return $result
+}
+
 function Get-Metrics([array]$Runs,[int]$IncidentCount){
     $completed=@($Runs|Where-Object{$_.outcome -in @('succeeded','failed','unverified','cancelled')})
     $verified=@($completed|Where-Object{$_.outcome-eq 'succeeded' -and $_.verification_status-eq 'verified'})
@@ -135,11 +152,13 @@ $counts=[ordered]@{
     ai_interventions=$totalAi
     average_duration_ms=if($allDurations.Count){[math]::Round(($allDurations|Measure-Object -Average).Average)}else{$null}
 }
+$sharedExperience=Read-SharedExperience $ProcedureRoot
+$counts.shared_lessons=$sharedExperience.lessons
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.3.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.4.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     company=[ordered]@{status='not_configured'}
-    counts=$counts;procedures=$items
+    counts=$counts;experience=$sharedExperience;procedures=$items
 }
 $companyPath=Join-Path $ProcedureRoot 'company-profile.json'
 if(Test-Path -LiteralPath $companyPath){

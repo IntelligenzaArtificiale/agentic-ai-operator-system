@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "product": "Agentic AI Operator System",
+  "scopes": ["software", "business", "pattern"],
+  "promotion": {
+    "minimum_verified_observations": 3,
+    "minimum_distinct_procedures": 2
+  }
+}

@@ -20,6 +20,7 @@ ALLOWED_PLAN_STATES = {
 ALLOWED_OPERATIONS = {
     "app",
     "click",
+    "insert_text",
     "multi_edit",
     "shortcut",
     "type",
@@ -92,7 +93,12 @@ def validate_plan(plan: dict[str, Any]) -> None:
         _require(isinstance(actions, list), f"actions must be a list: {block_id}")
         if block["executor"] == "ai":
             _require(not actions, f"AI block cannot contain deterministic actions: {block_id}")
-        coordinate_ops = {action.get("op") for action in actions} & {"click", "type", "multi_edit"}
+        coordinate_ops = {action.get("op") for action in actions} & {
+            "click",
+            "insert_text",
+            "type",
+            "multi_edit",
+        }
         if coordinate_ops:
             fingerprints = plan.get("environment", {}).get("fingerprints", [])
             guard_kinds = {guard.get("kind") for guard in block.get("preconditions", [])}
@@ -103,6 +109,19 @@ def validate_plan(plan: dict[str, Any]) -> None:
             )
         for action in actions:
             _require(action.get("op") in ALLOWED_OPERATIONS, f"Invalid operation in {block_id}")
+            if action.get("op") == "insert_text":
+                loc = action.get("loc")
+                _require(
+                    isinstance(loc, list)
+                    and len(loc) == 2
+                    and all(isinstance(value, (int, float)) for value in loc),
+                    f"Invalid insert_text loc in {block_id}",
+                )
+                _require(
+                    action.get("anchor") in {"document_start", "document_end", "caret"},
+                    f"Invalid insert_text anchor in {block_id}",
+                )
+                _require(isinstance(action.get("text", ""), str), f"Invalid insert_text text in {block_id}")
             rendered_slots = set(SLOT_PATTERN.findall(json.dumps(action)))
             _require(rendered_slots <= variable_names, f"Unknown variables in {block_id}")
 
@@ -224,6 +243,8 @@ class ProcedureRunner:
                 action.get("clear", False),
                 action.get("press_enter", False),
             )
+        elif op == "insert_text":
+            self._insert_text(action)
         elif op == "shortcut":
             self.desktop.shortcut(action["keys"])
         elif op == "wait":
@@ -236,6 +257,22 @@ class ProcedureRunner:
             self._wait_for(action)
         else:
             raise PlanError(f"Unsupported operation: {op}")
+
+    def _insert_text(self, action: dict[str, Any]) -> None:
+        """Insert without replacing content already present in a rich-text control."""
+        self.desktop.click(tuple(action["loc"]), "left", 1)
+        anchor = action["anchor"]
+        if anchor == "document_start":
+            self.desktop.shortcut("ctrl+home")
+        elif anchor == "document_end":
+            self.desktop.shortcut("ctrl+end")
+
+        paste_text = getattr(self.desktop, "paste_text", None)
+        if paste_text is None:
+            paste_text = getattr(self.desktop, "_paste_text", None)
+        if paste_text is None:
+            raise PlanError("Desktop backend does not support focused text insertion")
+        paste_text(action.get("text", ""))
 
     def _execute_app(self, action: dict[str, Any]) -> None:
         mode = action.get("mode", "launch")

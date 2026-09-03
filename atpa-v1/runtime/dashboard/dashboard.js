@@ -20,7 +20,7 @@
   function renderSystem() {
     const labels = {chatgpt:'ChatGPT',codex:'Codex',mcp:'MCP Windows',plugin:'Sistema',recorder:'OpenSteps'};
     byId('system').innerHTML = Object.entries(labels).map(([key,label]) => `<div class="pill ${data.system[key]?'ok':''}"><i class="dot"></i><b>${label}</b><br><span>${data.system[key]?'Operativo':'Non rilevato'}</span></div>`).join('');
-    const items = [['Procedure',data.counts.total],['Piani compilati',data.counts.compiled],['Esecuzioni',data.counts.runs],['Interventi IA',data.counts.ai_interventions],['Errori',data.counts.incidents],['Tempo medio verificato',duration(data.counts.average_duration_ms)]];
+    const items = [['Procedure',data.counts.total],['Piani compilati',data.counts.compiled],['Esecuzioni',data.counts.runs],['Esperienze condivise',data.counts.shared_lessons||0],['Interventi IA',data.counts.ai_interventions],['Errori',data.counts.incidents],['Tempo medio verificato',duration(data.counts.average_duration_ms)]];
     byId('stats').innerHTML = items.map(([label,value]) => `<div class="stat"><strong>${value ?? 0}</strong><span>${label}</span></div>`).join('');
   }
 
