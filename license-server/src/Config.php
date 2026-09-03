@@ -5,8 +5,11 @@ namespace AIOS\Licensing;
 
 final class Config
 {
-    public function __construct(private readonly array $values)
+    private $values;
+
+    public function __construct(array $values)
     {
+        $this->values = $values;
         foreach (['product', 'admin_password_hash', 'license_pepper', 'signing_secret_key', 'data_file'] as $key) {
             if (!isset($values[$key]) || !is_string($values[$key]) || trim($values[$key]) === '') {
                 throw new \RuntimeException("Missing server configuration: {$key}");
@@ -32,7 +35,7 @@ final class Config
         return new self($values);
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, $default = null)
     {
         return $this->values[$key] ?? $default;
     }

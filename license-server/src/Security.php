@@ -34,7 +34,7 @@ final class Security
     {
         try {
             return new \DateTimeImmutable($value, new \DateTimeZone('UTC'));
-        } catch (\Exception) {
+        } catch (\Exception $error) {
             throw new \InvalidArgumentException('Invalid date.');
         }
     }

@@ -7,7 +7,7 @@ use AIOS\Licensing\LicenseStore;
 
 spl_autoload_register(static function (string $class): void {
     $prefix = 'AIOS\\Licensing\\';
-    if (str_starts_with($class, $prefix)) {
+    if (strpos($class, $prefix) === 0) {
         require_once __DIR__ . '/' . substr($class, strlen($prefix)) . '.php';
     }
 });

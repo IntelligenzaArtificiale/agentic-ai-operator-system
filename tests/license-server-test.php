@@ -35,7 +35,7 @@ $store = new LicenseStore((string) $config->get('data_file'));
 $service = new LicenseService($config, $store);
 $future = (new DateTimeImmutable('+2 days', new DateTimeZone('UTC')))->format('Y-m-d\TH:i');
 $created = $service->createLicense(['name' => 'Test', 'email' => 'test@example.com', 'phone' => '+39000', 'device_limit' => 1, 'expires_at' => $future], 'test');
-check(!str_contains(file_get_contents($temporary . '/license.json'), $created['license_key']), 'Plaintext key persisted');
+check(strpos(file_get_contents($temporary . '/license.json'), $created['license_key']) === false, 'Plaintext key persisted');
 
 $deviceOne = str_repeat('a', 64);
 $activation = $service->activate(['license_key' => $created['license_key'], 'device_id' => $deviceOne, 'device_name' => 'PC 1', 'client_version' => '2.5.0'], '127.0.0.1');

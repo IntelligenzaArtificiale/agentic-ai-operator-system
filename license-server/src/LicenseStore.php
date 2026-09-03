@@ -5,8 +5,11 @@ namespace AIOS\Licensing;
 
 final class LicenseStore
 {
-    public function __construct(private readonly string $dataFile)
+    private $dataFile;
+
+    public function __construct(string $dataFile)
     {
+        $this->dataFile = $dataFile;
         $directory = dirname($dataFile);
         if (!is_dir($directory) && !mkdir($directory, 0700, true) && !is_dir($directory)) {
             throw new \RuntimeException('Cannot create license data directory.');
@@ -18,9 +21,9 @@ final class LicenseStore
         return $this->withLock(LOCK_SH, fn (): array => $this->readUnlocked());
     }
 
-    public function transact(callable $callback): mixed
+    public function transact(callable $callback)
     {
-        return $this->withLock(LOCK_EX, function () use ($callback): mixed {
+        return $this->withLock(LOCK_EX, function () use ($callback) {
             $state = $this->readUnlocked();
             $result = $callback($state);
             $state['revision'] = ((int) ($state['revision'] ?? 0)) + 1;
@@ -29,7 +32,7 @@ final class LicenseStore
         });
     }
 
-    private function withLock(int $mode, callable $callback): mixed
+    private function withLock(int $mode, callable $callback)
     {
         $lock = fopen($this->dataFile . '.lock', 'c+');
         if ($lock === false || !flock($lock, $mode)) {

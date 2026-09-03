@@ -6,11 +6,13 @@ namespace AIOS\Licensing;
 final class LicenseService
 {
     private const KEY_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    private $config;
+    private $store;
 
-    public function __construct(
-        private readonly Config $config,
-        private readonly LicenseStore $store,
-    ) {
+    public function __construct(Config $config, LicenseStore $store)
+    {
+        $this->config = $config;
+        $this->store = $store;
     }
 
     public function createLicense(array $input, string $actor): array
@@ -93,7 +95,7 @@ final class LicenseService
                     $license['license_id'] ?? '', $license['key_prefix'] ?? '',
                     $customer['name'] ?? '', $customer['email'] ?? '', $customer['phone'] ?? '',
                 ]);
-                return str_contains($this->lower($haystack), $needle);
+                return strpos($this->lower($haystack), $needle) !== false;
             }));
         }
         usort($items, static fn (array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? '')));
@@ -306,7 +308,7 @@ final class LicenseService
         return 'AIOS-' . implode('-', str_split($characters, 5));
     }
 
-    private function deviceHash(mixed $value): string
+    private function deviceHash($value): string
     {
         $deviceHash = strtolower(trim((string) $value));
         if (!preg_match('/^[a-f0-9]{64}$/', $deviceHash)) {
@@ -345,7 +347,7 @@ final class LicenseService
         return function_exists('mb_strtolower') ? mb_strtolower($value) : strtolower($value);
     }
 
-    private function boundedInt(mixed $value, int $minimum, int $maximum, string $label): int
+    private function boundedInt($value, int $minimum, int $maximum, string $label): int
     {
         $integer = filter_var($value, FILTER_VALIDATE_INT);
         if ($integer === false || $integer < $minimum || $integer > $maximum) {
@@ -369,8 +371,11 @@ final class LicenseService
 
 final class LicenseDenied extends \RuntimeException
 {
-    public function __construct(string $message, public readonly int $statusCode)
+    public $statusCode;
+
+    public function __construct(string $message, int $statusCode)
     {
+        $this->statusCode = $statusCode;
         parent::__construct($message);
     }
 }

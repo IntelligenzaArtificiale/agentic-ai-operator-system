@@ -1,6 +1,6 @@
 # Server licenze AIOS
 
-Requisiti: PHP 8.2+, HTTPS, estensioni `sodium` e `json`. Caricare il contenuto di questa cartella in una directory web dedicata, verificando che `private/` non sia raggiungibile via HTTP.
+Requisiti: PHP 7.4+, HTTPS, estensioni `sodium` e `json`. Caricare il contenuto di questa cartella in una directory web dedicata, verificando che `private/` non sia raggiungibile via HTTP. La compatibilità PHP 7.4 è prevista per hosting legacy; per nuove installazioni è preferibile una versione PHP ancora supportata dal fornitore.
 
 1. Esegui una sola volta `tools/generate-license-provisioning.py`: crea il file ignorato `private/provisioning.php` e restituisce la chiave pubblica da incorporare nel client prima della build.
 2. Prima dell’upload genera localmente un token casuale di almeno 32 caratteri e salvalo come `private/setup-token.txt`; non condividerlo in chat.
