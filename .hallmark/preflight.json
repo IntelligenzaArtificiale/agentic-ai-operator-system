@@ -1,0 +1,8 @@
+{
+  "date": "2026-09-03",
+  "framework": "PHP 7.4 server-rendered HTML",
+  "styles": "license-server/assets/admin.css",
+  "tokens": "license-server/assets/tokens.css",
+  "motion": "cut",
+  "notes": "No frontend framework or external UI dependency."
+}
