@@ -10,6 +10,6 @@ Requisiti: PHP 7.4+, HTTPS, estensioni `sodium` e `json`. Caricare il contenuto 
 6. Verificare che una richiesta diretta a `private/config.php` e `private/license.json` restituisca `403` o `404`.
 7. Conservare un backup cifrato della cartella `private/`. Senza la chiave Ed25519, le concessioni firmate non sono recuperabili.
 
-Il server non salva mai le chiavi di licenza in chiaro. La chiave appena creata viene mostrata una volta sola. L’API pubblica accetta soltanto `POST` JSON e applica limiti per IP e azione.
+Il server non salva mai le chiavi di licenza in chiaro. Per consentire la visualizzazione amministrativa, conserva un ciphertext Sodium autenticato e lo decifra soltanto dopo accesso e richiesta esplicita. Le licenze legacy prive del ciphertext devono usare **Rigenera chiave** una volta; questo invalida la chiave precedente e rimuove i dispositivi associati. **Elimina definitivamente** cancella licenza, dispositivi ed eventi di audit collegati dopo la conferma testuale `ELIMINA`. L’API pubblica accetta soltanto `POST` JSON e applica limiti per IP e azione.
 
 Su Nginx la regola `.htaccess` non viene letta: configurare esplicitamente il diniego HTTP per `/private/` prima della messa online.

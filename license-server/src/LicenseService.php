@@ -36,6 +36,7 @@ final class LicenseService
             'license_id' => $licenseId,
             'key_prefix' => substr($key, 0, 10),
             'key_hash' => Security::secretHash(Security::normalizeLicenseKey($key), $this->config->licensePepper()),
+            'key_encrypted' => Security::encryptLicenseKey($key, $this->config->licensePepper()),
             'customer' => ['name' => $name, 'email' => $email, 'phone' => $phone],
             'status' => 'active',
             'expires_at' => Security::iso($expiresAt),
@@ -49,6 +50,53 @@ final class LicenseService
             $this->audit($state, 'license_created', $actor, $licenseId);
         });
         return ['license' => $license, 'license_key' => $key];
+    }
+
+    public function revealLicenseKey(string $licenseId): array
+    {
+        $state = $this->store->read();
+        if (!isset($state['licenses'][$licenseId])) {
+            throw new \InvalidArgumentException('Licenza non trovata.');
+        }
+        $encrypted = (string) ($state['licenses'][$licenseId]['key_encrypted'] ?? '');
+        return [
+            'license_id' => $licenseId,
+            'license_key' => Security::decryptLicenseKey($encrypted, $this->config->licensePepper()),
+            'customer_name' => (string) ($state['licenses'][$licenseId]['customer']['name'] ?? ''),
+        ];
+    }
+
+    public function regenerateLicenseKey(string $licenseId, string $actor): array
+    {
+        $key = $this->generateLicenseKey();
+        $this->store->transact(function (array &$state) use ($licenseId, $actor, $key): void {
+            $license = &$this->requireLicense($state, $licenseId);
+            $license['key_prefix'] = substr($key, 0, 10);
+            $license['key_hash'] = Security::secretHash(Security::normalizeLicenseKey($key), $this->config->licensePepper());
+            $license['key_encrypted'] = Security::encryptLicenseKey($key, $this->config->licensePepper());
+            $license['devices'] = [];
+            $license['updated_at'] = Security::iso(Security::now());
+            $this->audit($state, 'license_key_regenerated', $actor, $licenseId);
+        });
+        $state = $this->store->read();
+        return ['license_id' => $licenseId, 'license_key' => $key, 'customer_name' => (string) ($state['licenses'][$licenseId]['customer']['name'] ?? '')];
+    }
+
+    public function deleteLicense(string $licenseId, string $confirmation, string $actor): void
+    {
+        if ($confirmation !== 'ELIMINA') {
+            throw new \InvalidArgumentException('Scrivi ELIMINA per confermare.');
+        }
+        $this->store->transact(function (array &$state) use ($licenseId, $actor): void {
+            $license = &$this->requireLicense($state, $licenseId);
+            $deletedReference = hash('sha256', $licenseId . $actor);
+            unset($license);
+            unset($state['licenses'][$licenseId]);
+            $state['audit'] = array_values(array_filter($state['audit'], static function (array $entry) use ($licenseId): bool {
+                return ($entry['license_id'] ?? null) !== $licenseId;
+            }));
+            $this->audit($state, 'license_deleted', $actor, null, ['deleted_reference' => $deletedReference]);
+        });
     }
 
     public function updateLicense(string $licenseId, array $input, string $actor): void

@@ -10,6 +10,48 @@ final class Security
         return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 
+    public static function base64UrlDecode(string $value): string
+    {
+        $padding = strlen($value) % 4;
+        if ($padding !== 0) {
+            $value .= str_repeat('=', 4 - $padding);
+        }
+        $decoded = base64_decode(strtr($value, '-_', '+/'), true);
+        if ($decoded === false) {
+            throw new \RuntimeException('Encrypted value is invalid.');
+        }
+        return $decoded;
+    }
+
+    public static function encryptLicenseKey(string $licenseKey, string $pepper): string
+    {
+        $encryptionKey = sodium_crypto_generichash('AIOS license key encryption v1', $pepper, SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $ciphertext = sodium_crypto_secretbox($licenseKey, $nonce, $encryptionKey);
+        sodium_memzero($encryptionKey);
+        return 'v1.' . self::base64UrlEncode($nonce . $ciphertext);
+    }
+
+    public static function decryptLicenseKey(string $encrypted, string $pepper): string
+    {
+        if (strpos($encrypted, 'v1.') !== 0) {
+            throw new \RuntimeException('Chiave non disponibile: rigenera la licenza.');
+        }
+        $payload = self::base64UrlDecode(substr($encrypted, 3));
+        if (strlen($payload) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) {
+            throw new \RuntimeException('Chiave cifrata non valida.');
+        }
+        $nonce = substr($payload, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $ciphertext = substr($payload, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $encryptionKey = sodium_crypto_generichash('AIOS license key encryption v1', $pepper, SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+        $licenseKey = sodium_crypto_secretbox_open($ciphertext, $nonce, $encryptionKey);
+        sodium_memzero($encryptionKey);
+        if ($licenseKey === false) {
+            throw new \RuntimeException('Impossibile decifrare la chiave.');
+        }
+        return $licenseKey;
+    }
+
     public static function normalizeLicenseKey(string $value): string
     {
         return strtoupper(preg_replace('/[^A-Z0-9]/i', '', trim($value)) ?? '');

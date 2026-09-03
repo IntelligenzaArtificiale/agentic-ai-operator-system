@@ -56,8 +56,11 @@ The JSON document is server-side state, never a public download:
 }
 ```
 
-Each license contains customer contact data, a key hash and display prefix,
-status, expiry, device limit, timestamps and a map of activated devices. Each
+Each license contains customer contact data, a validation hash, display prefix
+and an authenticated Sodium Secretbox ciphertext used only for explicit
+administrator display. Plaintext keys are never persisted; legacy records need
+one key regeneration. A license also contains status, expiry, device limit,
+timestamps and a map of activated devices. Each
 device contains its hashed identifier, label, token hash, activation and last
 seen timestamps, client version and optional revocation timestamp. Writes are
 serialized with a dedicated lock file and committed through an atomic rename.

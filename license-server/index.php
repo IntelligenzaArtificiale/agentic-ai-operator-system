@@ -31,14 +31,24 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             throw new RuntimeException('Autenticazione richiesta.');
         } elseif ($action === 'create') {
             $created = licenseService()->createLicense($_POST, 'admin');
-            $_SESSION['new_license_key'] = $created['license_key'];
-            $message = 'Licenza creata. Copia ora la chiave: non sarà mostrata di nuovo.';
+            $_SESSION['license_key_context'] = ['license_id' => $created['license']['license_id'], 'license_key' => $created['license_key'], 'customer_name' => $created['license']['customer']['name']];
+            $message = 'Licenza creata.';
         } elseif ($action === 'update') {
             licenseService()->updateLicense((string) $_POST['license_id'], $_POST, 'admin');
             $message = 'Licenza aggiornata.';
         } elseif ($action === 'revoke_device') {
             licenseService()->revokeDevice((string) $_POST['license_id'], (string) $_POST['activation_id'], 'admin');
             $message = 'Dispositivo revocato.';
+        } elseif ($action === 'reveal_key') {
+            $_SESSION['license_key_context'] = licenseService()->revealLicenseKey((string) $_POST['license_id']);
+            $message = 'Chiave decifrata in sicurezza.';
+        } elseif ($action === 'regenerate_key') {
+            $_SESSION['license_key_context'] = licenseService()->regenerateLicenseKey((string) $_POST['license_id'], 'admin');
+            $message = 'Nuova chiave generata. La precedente e tutti i dispositivi associati sono stati invalidati.';
+        } elseif ($action === 'delete_license') {
+            licenseService()->deleteLicense((string) $_POST['license_id'], (string) ($_POST['confirmation'] ?? ''), 'admin');
+            unset($_SESSION['license_key_context']);
+            $message = 'Licenza, dispositivi e storico associato eliminati definitivamente.';
         }
     } catch (Throwable $exception) {
         $error = $exception->getMessage();
@@ -49,6 +59,6 @@ $authenticated = (bool) ($_SESSION['authenticated'] ?? false);
 $search = trim((string) ($_GET['q'] ?? ''));
 $page = max(1, (int) ($_GET['page'] ?? 1));
 $licenses = $authenticated ? licenseService()->listLicenses($search, $page) : null;
-$newKey = $_SESSION['new_license_key'] ?? null;
-unset($_SESSION['new_license_key']);
+$keyContext = $_SESSION['license_key_context'] ?? null;
+unset($_SESSION['license_key_context']);
 require __DIR__ . '/templates/admin.php';

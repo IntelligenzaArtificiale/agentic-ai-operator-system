@@ -36,6 +36,22 @@ $service = new LicenseService($config, $store);
 $future = (new DateTimeImmutable('+2 days', new DateTimeZone('UTC')))->format('Y-m-d\TH:i');
 $created = $service->createLicense(['name' => 'Test', 'email' => 'test@example.com', 'phone' => '+39000', 'device_limit' => 1, 'expires_at' => $future], 'test');
 check(strpos(file_get_contents($temporary . '/license.json'), $created['license_key']) === false, 'Plaintext key persisted');
+check($service->revealLicenseKey($created['license']['license_id'])['license_key'] === $created['license_key'], 'Encrypted key cannot be revealed');
+$storedAfterCreation = $store->read();
+$storedCiphertext = $storedAfterCreation['licenses'][$created['license']['license_id']]['key_encrypted'];
+$store->transact(function (array &$state) use ($created, $storedCiphertext): void {
+    $licenseId = $created['license']['license_id'];
+    $state['licenses'][$licenseId]['key_encrypted'] = substr($storedCiphertext, 0, -1) . ($storedCiphertext[-1] === 'A' ? 'B' : 'A');
+});
+try {
+    $service->revealLicenseKey($created['license']['license_id']);
+    throw new RuntimeException('Tampered ciphertext was accepted');
+} catch (RuntimeException $error) {
+    check(strpos($error->getMessage(), 'decifrare') !== false || strpos($error->getMessage(), 'invalid') !== false, 'Wrong tamper error');
+}
+$store->transact(function (array &$state) use ($created, $storedCiphertext): void {
+    $state['licenses'][$created['license']['license_id']]['key_encrypted'] = $storedCiphertext;
+});
 
 $deviceOne = str_repeat('a', 64);
 $activation = $service->activate(['license_key' => $created['license_key'], 'device_id' => $deviceOne, 'device_name' => 'PC 1', 'client_version' => '2.5.0'], '127.0.0.1');
@@ -68,6 +84,22 @@ try {
 } catch (LicenseDenied $error) {
     check($error->statusCode === 403, 'Wrong revoked-license status');
 }
+
+$regenerated = $service->regenerateLicenseKey($licenseId, 'test');
+check($regenerated['license_key'] !== $created['license_key'], 'Key regeneration reused the old key');
+check($service->revealLicenseKey($licenseId)['license_key'] === $regenerated['license_key'], 'Regenerated key cannot be revealed');
+$state = $store->read();
+check($state['licenses'][$licenseId]['devices'] === [], 'Key regeneration did not clear devices');
+try {
+    $service->deleteLicense($licenseId, 'elimina', 'test');
+    throw new RuntimeException('Delete accepted invalid confirmation');
+} catch (InvalidArgumentException $error) {
+    check(strpos($error->getMessage(), 'ELIMINA') !== false, 'Wrong delete confirmation error');
+}
+$service->deleteLicense($licenseId, 'ELIMINA', 'test');
+$state = $store->read();
+check(!isset($state['licenses'][$licenseId]), 'License was not deleted');
+check(count(array_filter($state['audit'], static fn (array $entry): bool => ($entry['license_id'] ?? null) === $licenseId)) === 0, 'License audit history was not deleted');
 
 $expired = $service->createLicense(['name' => 'Expired', 'email' => 'expired@example.com', 'phone' => '+39111', 'device_limit' => 1, 'expires_at' => $future], 'test');
 $store->transact(function (array &$state) use ($expired): void {
