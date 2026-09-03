@@ -7,7 +7,11 @@ $releaseBase="Agentic-AI-Operator-System-$Version-Windows-x64"
 $releaseRoot=Join-Path $repoRoot "release\$releaseBase"
 $zip="$releaseRoot.zip"
 if(Test-Path -LiteralPath $releaseRoot){Remove-Item -LiteralPath $releaseRoot -Recurse -Force}
-if(Test-Path -LiteralPath $zip){Remove-Item -LiteralPath $zip -Force}
+$updateExisting=$false
+if(Test-Path -LiteralPath $zip){
+    try{Remove-Item -LiteralPath $zip -Force}
+    catch{$updateExisting=$true}
+}
 New-Item -ItemType Directory -Path $releaseRoot|Out-Null
 foreach($directory in 'bundle','payload','runtime','template','third-party-notices'){
     Copy-Item -LiteralPath (Join-Path $source $directory) -Destination $releaseRoot -Recurse
@@ -15,7 +19,11 @@ foreach($directory in 'bundle','payload','runtime','template','third-party-notic
 foreach($file in 'AGENTS.md','Check-AgenticUpdate.ps1','Check-System.ps1','GUIDA-STRUTTURA-PROCEDURE.md','GUIDA-UTENTE.md','INSTALLA.cmd','Install-System.ps1','PACKAGE-MANIFEST.json','PROMPT-INSTALLAZIONE.txt','TELEMETRIA-E-OTTIMIZZAZIONE.md'){
     Copy-Item -LiteralPath (Join-Path $source $file) -Destination $releaseRoot
 }
-Compress-Archive -LiteralPath $releaseRoot -DestinationPath $zip -CompressionLevel Optimal
+if($updateExisting){
+    Compress-Archive -LiteralPath $releaseRoot -DestinationPath $zip -CompressionLevel Optimal -Update
+}else{
+    Compress-Archive -LiteralPath $releaseRoot -DestinationPath $zip -CompressionLevel Optimal
+}
 $hash=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash
 $manifest=[ordered]@{
     schema_version=1

@@ -5,6 +5,8 @@ description: Trasforma una o più esportazioni del registratore in una procedura
 
 # Crea procedura
 
+Prima di leggere file o compiere azioni, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non accedere alle registrazioni o procedure e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Ricevi dall'utente uno o più path esportati dal registratore e il nome della procedura. La radice predefinita è `%USERPROFILE%\Documents\Agentic AI Operator System`. Se `company-profile.json` è configurato, usalo soltanto per contestualizzare reparto, ruoli e strumenti senza dedurre azioni non richieste.
 
 1. Leggi integralmente Markdown, trascrizioni audio, immagini e metadati UI disponibili. Se sono presenti più registrazioni, confrontale e separa invarianti da dati variabili.

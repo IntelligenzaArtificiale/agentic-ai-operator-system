@@ -5,6 +5,8 @@ description: Esegue per nome una procedura aziendale già creata usando Windows-
 
 # Avvia procedura
 
+Prima di leggere file o compiere azioni, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non accedere alle procedure e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Trova la procedura per nome o slug sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`. Leggi prima `procedure.json`, `execution-plan.json`, il suo `SKILL.md` e `experience\lessons.json`; carica riferimenti, incidenti storici ed eccezioni solo quando diventano rilevanti. Avvisa se lo stato non è `validated` o `active` e chiedi conferma prima di eseguire una bozza.
 
 Prima di qualsiasi azione chiama `procedure-runner.PrepareRun`. Usa il manifest

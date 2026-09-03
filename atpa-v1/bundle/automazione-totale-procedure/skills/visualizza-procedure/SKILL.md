@@ -5,12 +5,13 @@ description: Aggiorna e apre il dashboard locale delle procedure aziendali, con 
 
 # Visualizza procedure
 
-Il dashboard predefinito è `%USERPROFILE%\Documents\Agentic AI Operator System\catalogo\index.html` e viene creato dall'installer, poi aggiornato automaticamente dopo creazione, modifica, collaudo, esecuzione e ottimizzazione.
+Prima di leggere file o generare la dashboard, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non accedere al catalogo e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
 
-Se `index.html` e `data.js` esistono, non rigenerarli: restituisci subito il link
-locale cliccabile e aprilo tramite `windows-mcp`, senza terminale o PowerShell. Se
-mancano o `data.js` è più vecchio dell'ultima run, esegui una sola volta lo script
-runtime `Update-Dashboard.ps1`, quindi apri il file.
+Il dashboard predefinito è `http://127.0.0.1:8765/`: il server locale verifica la licenza a ogni richiesta. Viene aggiornato automaticamente dopo creazione, modifica, collaudo, esecuzione e ottimizzazione.
+
+Esegui una sola volta lo script runtime `Update-Dashboard.ps1 -Open`, quindi
+restituisci il link locale cliccabile. Non aprire direttamente vecchi file del
+catalogo: dalla versione 2.5.0 contengono soltanto un avviso di attivazione.
 
 Il dashboard mostra profilo aziendale, stato sistema, numero di esecuzioni, successi, errori, durata
 media e migliore, ultima durata e step più lenti per ogni procedura.

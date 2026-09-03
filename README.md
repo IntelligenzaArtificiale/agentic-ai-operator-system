@@ -36,11 +36,12 @@ Run the MCP server over stdio:
 
 Build the portable package with `build_release.ps1`. On another Windows PC:
 
-1. Extract `Agentic-AI-Operator-System-2.4.0-Windows-x64.zip`.
+1. Extract `Agentic-AI-Operator-System-2.5.0-Windows-x64.zip`.
 2. Double-click `INSTALLA.cmd` (administrator rights are not required).
 3. Restart the ChatGPT desktop app or Codex.
 4. Type `/mcp` to verify that the global Windows automation server is connected.
-5. Open the bundled OpenSteps recorder from the Desktop shortcut.
+5. Open `Attiva Agentic AI Operator System` on the Desktop and enter the license in the dedicated local window.
+6. After activation, open the bundled OpenSteps recorder from its Desktop shortcut.
 
 An AI agent can install the archive autonomously after the user supplies its path
 and explicitly requests installation. The archive-root `AGENTS.md` and
@@ -51,6 +52,10 @@ installation.
 
 Updates are discovered through `release-manifest.json`; downloads are accepted
 only after their SHA-256 has been verified.
+
+Version 2.5.0 gates Windows MCP tools, the deterministic procedure runner,
+OpenSteps and the local dashboard behind a signed, device-bound license lease.
+License keys are never requested in chat or stored locally in plaintext.
 
 This system targets supported Windows 10 and Windows 11 releases. A universal
 "100% of every application" guarantee is not technically possible: secure desktop,

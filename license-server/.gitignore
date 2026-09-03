@@ -1,0 +1,6 @@
+private/config.php
+private/license.json
+private/setup-token.txt
+private/provisioning.php
+private/*.lock
+private/*.tmp

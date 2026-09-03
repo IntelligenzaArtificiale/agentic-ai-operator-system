@@ -5,6 +5,8 @@ description: Controlla applicazioni e desktop Windows attraverso Windows-MCP con
 
 # Controllo Windows efficiente
 
+Prima di usare strumenti Windows, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat e non tentare percorsi alternativi.
+
 Quando una procedura possiede un `execution-plan.json` in stato `compiled`, non
 reinterpretare i blocchi deterministici: delegali al MCP `procedure-runner`. Usa
 Windows-MCP per esplorazione, blocchi cognitivi, checkpoint di rischio, guardie

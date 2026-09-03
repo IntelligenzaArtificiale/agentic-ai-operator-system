@@ -4,7 +4,18 @@ param(
     [switch]$Open
 )
 $ErrorActionPreference='Stop'
-$dashboardRoot=Join-Path $ProcedureRoot 'catalogo'
+$programRoot=Split-Path -Parent $PSCommandPath
+$licenseCheck=Join-Path $programRoot 'licensing\check.py'
+$licensePython=Join-Path $env:APPDATA 'uv\tools\windows-mcp\Scripts\python.exe'
+if(-not(Test-Path -LiteralPath $licenseCheck) -or -not(Test-Path -LiteralPath $licensePython)){throw 'Componente licenza non installato.'}
+& $licensePython $licenseCheck | Out-Null
+if($LASTEXITCODE -ne 0){
+    $activation=Join-Path $programRoot 'licensing\activation_ui.py'
+    $licensePythonW=Join-Path (Split-Path $licensePython) 'pythonw.exe'
+    Start-Process -FilePath $licensePythonW -ArgumentList @($activation) -WindowStyle Hidden
+    throw 'Licenza non attiva. Usa la finestra di attivazione dedicata.'
+}
+$dashboardRoot=Join-Path $programRoot 'dashboard-live'
 $sourceDashboard=Join-Path $PSScriptRoot 'dashboard'
 $dataFile=Join-Path $dashboardRoot 'data.js'
 New-Item -ItemType Directory -Force -Path $dashboardRoot|Out-Null
@@ -155,7 +166,7 @@ $counts=[ordered]@{
 $sharedExperience=Read-SharedExperience $ProcedureRoot
 $counts.shared_lessons=$sharedExperience.lessons
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.4.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.5.0';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     company=[ordered]@{status='not_configured'}
     counts=$counts;experience=$sharedExperience;procedures=$items
@@ -166,5 +177,16 @@ if(Test-Path -LiteralPath $companyPath){
 }
 $json=$payload|ConvertTo-Json -Depth 30 -Compress
 [IO.File]::WriteAllText($dataFile,"window.ATPA_DATA=$json;",[Text.UTF8Encoding]::new($false))
-if($Open){Start-Process (Join-Path $dashboardRoot 'index.html')}
+if($Open){
+    $serverUrl='http://127.0.0.1:8765/'
+    $running=$false
+    try{Invoke-WebRequest -Uri $serverUrl -UseBasicParsing -TimeoutSec 1|Out-Null;$running=$true}catch{}
+    if(-not $running){
+        $server=Join-Path $programRoot 'licensing\dashboard_server.py'
+        $licensePythonW=Join-Path (Split-Path $licensePython) 'pythonw.exe'
+        Start-Process -FilePath $licensePythonW -ArgumentList @($server) -WindowStyle Hidden
+        Start-Sleep -Milliseconds 500
+    }
+    Start-Process $serverUrl
+}
 $payload

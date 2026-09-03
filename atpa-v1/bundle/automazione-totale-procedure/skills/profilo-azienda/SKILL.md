@@ -5,6 +5,8 @@ description: Crea o aggiorna il DNA aziendale con poche domande e fonti pubblich
 
 # Profilo azienda
 
+Prima di iniziare, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non leggere o aggiornare il profilo e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Gestisci `%USERPROFILE%\Documents\Agentic AI Operator System\company-profile.json`
 partendo dal template installato. Mantieni l'esperienza breve e non tecnica.
 

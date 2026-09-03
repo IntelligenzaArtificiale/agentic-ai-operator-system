@@ -1,5 +1,18 @@
 # Compiled procedure runtime
 
+## Central licensing 2.5.0
+
+- [x] Define the threat model, safe enforcement boundary and lease protocol.
+- [x] Build the authenticated PHP administration panel and license API.
+- [x] Hash license keys and device tokens; sign device-bound leases.
+- [x] Build the DPAPI-protected Windows client and activation window.
+- [x] Gate Windows MCP, procedure runner, OpenSteps and dashboard launchers.
+- [x] Add migration and activation flow for upgrades from older versions.
+- [x] Update all operational skills without exposing keys to model context.
+- [x] Test activation, expiry, revocation, device limits, offline leases and tampering.
+- [ ] Deploy the PHP service and verify denial of private server files.
+- [ ] Install locally, commit, push and publish release 2.5.0.
+
 ## Contextual experience memory 2.4.0
 
 - [x] Build a mandatory preflight manifest from the concrete procedure steps.

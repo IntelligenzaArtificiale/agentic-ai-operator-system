@@ -5,6 +5,9 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from fastmcp import FastMCP
 from mcp.types import ToolAnnotations
@@ -12,6 +15,7 @@ from windows_mcp.desktop.service import Desktop
 
 from engine import ProcedureRunner, load_plan
 from experience import prepare_run, validate_run_coverage
+from licensing.middleware import LicenseMiddleware, register_license_tools
 
 
 mcp = FastMCP(
@@ -19,6 +23,8 @@ mcp = FastMCP(
     instructions="Executes only validated deterministic blocks from compiled procedure plans.",
 )
 _desktop: Desktop | None = None
+register_license_tools(mcp)
+mcp.add_middleware(LicenseMiddleware())
 
 
 def get_desktop() -> Desktop:

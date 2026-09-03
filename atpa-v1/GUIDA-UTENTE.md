@@ -4,7 +4,7 @@ Sistema ideato da **Alessandro Ciciarelli**, fondatore di **Intelligenza Artific
 
 ## Dopo l'installazione
 
-Chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Le funzioni centrali disponibili sono:
+Prima apri dal Desktop **Attiva Agentic AI Operator System** e inserisci la chiave nella finestra dedicata. La chiave non deve mai essere incollata in chat. Poi chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Le funzioni centrali disponibili sono:
 
 - `$crea-procedura`: riceve uno o più path esportati dal registratore e genera una procedura dinamica.
 - `$crea-procedura-guidata`: crea una procedura senza registrazione tramite domande adattive, una per volta.
@@ -33,6 +33,9 @@ Esegui `Check-AgenticUpdate.ps1` senza parametri per controllare una nuova versi
 Il controllo non installa nulla. Dopo una conferma esplicita, usa
 `Check-AgenticUpdate.ps1 -Install`: il pacchetto viene scaricato da GitHub,
 verificato tramite SHA-256 e installato conservando procedure e registrazioni.
+Gli aggiornamenti restano disponibili anche quando la licenza non è attiva, così
+le installazioni precedenti possono ricevere correzioni. Le procedure, OpenSteps,
+la dashboard e gli strumenti MCP rimangono invece bloccati fino all'attivazione.
 
 ## Prestazioni
 

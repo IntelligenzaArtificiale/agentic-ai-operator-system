@@ -29,3 +29,4 @@ packages = ["src/winbridge"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src", "atpa-v1/runtime", "atpa-v1/runtime/procedure-runner"]

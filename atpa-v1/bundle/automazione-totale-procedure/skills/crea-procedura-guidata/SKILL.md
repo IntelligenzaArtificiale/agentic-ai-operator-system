@@ -5,6 +5,8 @@ description: Progetta e crea una procedura aziendale completa tramite intervista
 
 # Crea procedura guidata
 
+Prima di iniziare, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non raccogliere né creare procedure e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Costruisci una procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` partendo dalle informazioni dell'utente, senza richiedere né avviare OpenSteps. Se `company-profile.json` è configurato, riusa nomi, reparti e strumenti pertinenti senza trasformarli in passaggi impliciti.
 
 ## Intervista adattiva

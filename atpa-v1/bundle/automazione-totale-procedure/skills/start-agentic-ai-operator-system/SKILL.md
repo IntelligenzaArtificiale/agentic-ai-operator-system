@@ -5,6 +5,8 @@ description: Presenta in modo molto breve Agentic AI Operator System, l'ordine c
 
 # Start Agentic AI Operator System
 
+Prima di presentare il sistema, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, comunica soltanto che serve l'attivazione e usa `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Spiega il sistema senza dettagli tecnici, in italiano semplice e in non più di
 otto punti brevi. Presenta questo ordine:
 
@@ -21,5 +23,5 @@ Indica come primo passo `$profilo-azienda` se `company-profile.json` è assente 
 creazione della prima procedura. Non avviare interviste o procedure da questa skill.
 
 Assicurati che il dashboard esista eseguendo `Update-Dashboard.ps1` se disponibile,
-poi restituisci sempre un link Markdown cliccabile al file locale
-`%USERPROFILE%\Documents\Agentic AI Operator System\catalogo\index.html`.
+poi restituisci sempre il link Markdown locale `http://127.0.0.1:8765/`, servito
+con verifica della licenza a ogni richiesta.

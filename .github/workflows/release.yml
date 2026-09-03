@@ -1,6 +1,9 @@
 name: Publish Windows release
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
     inputs:
       version:
@@ -18,14 +21,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
+      - name: Resolve version
+        shell: pwsh
+        run: |
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            $version='${{ inputs.version }}'
+          } else {
+            $version='${{ github.ref_name }}'.TrimStart('v')
+          }
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid semantic version.' }
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
       - name: Build package and manifest
         shell: pwsh
-        run: ./Build-SystemRelease.ps1 -Version '${{ inputs.version }}'
+        run: ./Build-SystemRelease.ps1 -Version $env:VERSION
       - name: Publish GitHub release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $version='${{ inputs.version }}'
+          $version=$env:VERSION
           $zip="release/Agentic-AI-Operator-System-$version-Windows-x64.zip"
           gh release create "v$version" $zip release-manifest.json --title "Agentic AI Operator System $version" --generate-notes

@@ -5,6 +5,8 @@ description: Aggiorna una procedura aziendale e il relativo SKILL.md, schema, ri
 
 # Modifica procedura
 
+Prima di leggere file o compiere azioni, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non accedere alle procedure e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` e leggi `procedure.json`, `SKILL.md`, `experience\lessons.json` e soltanto i riferimenti coinvolti. Conserva run e incidenti storici; se cambi step o selettori, aggiorna esplicitamente l'ambito delle lezioni interessate senza cancellare l'evidenza originale.
 
 1. Applica la richiesta coerentemente a istruzioni, flow, input, condizioni, test e screenshot di riferimento.

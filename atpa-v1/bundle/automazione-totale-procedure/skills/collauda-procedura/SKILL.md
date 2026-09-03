@@ -5,6 +5,8 @@ description: Collauda una procedura aziendale esistente con Windows-MCP, raccogl
 
 # Collauda procedura
 
+Prima di leggere file o compiere azioni, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non accedere alle procedure e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Risolvi il nome nella directory `%USERPROFILE%\Documents\Agentic AI Operator System\procedure`; se più nomi corrispondono, chiedi quale. Leggi `procedure.json`, `execution-plan.json`, `SKILL.md`, `experience\lessons.json` e solo i riferimenti necessari al caso.
 
 Prima di agire chiama `procedure-runner.PrepareRun` e usa il risultato come

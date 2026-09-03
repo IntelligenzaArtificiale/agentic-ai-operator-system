@@ -5,6 +5,8 @@ description: Analizza telemetria, errori e lezioni di una procedura aziendale, p
 
 # Ottimizza procedura
 
+Prima di leggere file o compiere azioni, chiama `windows-mcp.LicenseStatus`. Se la licenza non è attiva, non accedere a procedure o telemetria e usa soltanto `windows-mcp.OpenLicenseActivation`; non chiedere mai la chiave in chat.
+
 Risolvi la procedura sotto `%USERPROFILE%\Documents\Agentic AI Operator System\procedure` e leggi `procedure.json`, `execution-plan.json`, `SKILL.md`, gli schemi, tutte le run valide e `experience\lessons.json`. Usa gli incidenti grezzi soltanto per approfondire anomalie già individuate. Una run è valida per una baseline soltanto se ha `outcome: succeeded`, `verification_status: verified` e prove coerenti con i criteri di successo.
 
 Chiama `procedure-runner.PrepareRun` anche nell'ottimizzazione: il candidato deve
