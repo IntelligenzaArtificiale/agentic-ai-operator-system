@@ -5,7 +5,7 @@
   "channel": "stable",
   "platform": "windows-x64",
   "zip_url": "https://github.com/IntelligenzaArtificiale/agentic-ai-operator-system/releases/download/v2.5.2/Agentic-AI-Operator-System-2.5.2-Windows-x64.zip",
-  "sha256": "E2FD40DBBC7A2F23C36BFFBE9A264230817434DD68725D51754A83FD7AD45025",
-  "published_at": "2026-09-14T11:13:57.6627764Z",
+  "sha256": "E510252D4307F800458CF6AA86C64D966EEA8C3CF186D0E4E1A8E7DA7AF6C0AC",
+  "published_at": "2026-09-14T11:17:28.7421029Z",
   "minimum_windows": "10"
 }
