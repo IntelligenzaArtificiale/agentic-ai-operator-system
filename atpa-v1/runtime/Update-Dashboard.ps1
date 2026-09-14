@@ -5,11 +5,12 @@ param(
 )
 $ErrorActionPreference='Stop'
 $programRoot=Split-Path -Parent $PSCommandPath
+. (Join-Path $programRoot 'Invoke-BackgroundCommand.ps1')
 $licenseCheck=Join-Path $programRoot 'licensing\check.py'
 $licensePython=Join-Path $env:APPDATA 'uv\tools\windows-mcp\Scripts\python.exe'
 if(-not(Test-Path -LiteralPath $licenseCheck) -or -not(Test-Path -LiteralPath $licensePython)){throw 'Componente licenza non installato.'}
-& $licensePython $licenseCheck | Out-Null
-if($LASTEXITCODE -ne 0){
+$licenseResult=Invoke-AiosBackgroundCommand -FilePath $licensePython -Arguments @($licenseCheck)
+if($licenseResult.ExitCode -ne 0){
     throw 'Licenza non attiva. Apri dal Desktop Attiva Agentic AI Operator System, verifica lo stato e chiudi la finestra.'
 }
 $dashboardRoot=Join-Path $programRoot 'dashboard-live'
@@ -110,8 +111,8 @@ function Get-Metrics([array]$Runs,[int]$IncidentCount){
 $codex=Find-Codex
 $mcp=$false;$plugin=$false
 if($codex){
-    try{$mcp=((& $codex mcp get windows-mcp 2>$null|Out-String)-match 'enabled:\s+true')}catch{}
-    try{$plugin=((& $codex plugin list 2>$null|Out-String)-match '(?m)^automazione-totale-procedure@personal\s+installed, enabled')}catch{}
+    try{$result=Invoke-AiosBackgroundCommand -FilePath $codex -Arguments @('mcp','get','windows-mcp');$mcp=($result.ExitCode -eq 0 -and $result.Output -match 'enabled:\s+true')}catch{}
+    try{$result=Invoke-AiosBackgroundCommand -FilePath $codex -Arguments @('plugin','list');$plugin=($result.ExitCode -eq 0 -and $result.Output -match '(?m)^automazione-totale-procedure@personal\s+installed, enabled')}catch{}
 }
 $chatgpt=[bool](Get-AppxPackage -ErrorAction SilentlyContinue|Where-Object{$_.Name-match 'ChatGPT|OpenAI' -or $_.PackageFullName-match 'ChatGPT|OpenAI'}|Select-Object -First 1)
 $recorder=[bool](Get-ChildItem -LiteralPath (Join-Path $env:LOCALAPPDATA 'Programs\Intelligenza Artificiale Italia\Agentic AI Operator System\OpenSteps') -Filter OpenSteps.App.exe -Recurse -File -ErrorAction SilentlyContinue|Select-Object -First 1)
@@ -163,7 +164,7 @@ $counts=[ordered]@{
 $sharedExperience=Read-SharedExperience $ProcedureRoot
 $counts.shared_lessons=$sharedExperience.lessons
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.5.2';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.5.3';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     company=[ordered]@{status='not_configured'}
     counts=$counts;experience=$sharedExperience;procedures=$items
@@ -177,11 +178,13 @@ $json=$payload|ConvertTo-Json -Depth 30 -Compress
 if($Open){
     $serverUrl='http://127.0.0.1:8765/'
     $running=$false
-    try{Invoke-WebRequest -Uri $serverUrl -UseBasicParsing -TimeoutSec 1|Out-Null;$running=$true}catch{}
+    try{Invoke-WebRequest -Uri $serverUrl -UseBasicParsing -TimeoutSec 1|Out-Null;$running=$true}catch{
+        if($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -eq 403){$running=$true}
+    }
     if(-not $running){
         $server=Join-Path $programRoot 'licensing\dashboard_server.py'
         $licensePythonW=Join-Path (Split-Path $licensePython) 'pythonw.exe'
-        Start-Process -FilePath $licensePythonW -ArgumentList @($server) -WindowStyle Hidden
+        Start-Process -FilePath $licensePythonW -ArgumentList @(('"'+$server+'"')) -WindowStyle Hidden
         Start-Sleep -Milliseconds 500
     }
     Start-Process $serverUrl

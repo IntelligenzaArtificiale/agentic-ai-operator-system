@@ -79,7 +79,7 @@ def _utc(value: str) -> datetime:
 
 
 class LicenseClient:
-    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.5.2"):
+    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.5.3"):
         root = state_dir or Path(os.environ.get("LOCALAPPDATA", Path.home())) / "Intelligenza Artificiale Italia" / "Agentic AI Operator System"
         self.state_dir = Path(root)
         self.state_path = self.state_dir / "license.dat"

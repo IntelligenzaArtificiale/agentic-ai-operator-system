@@ -1,5 +1,9 @@
 """Licensed entrypoint around the pinned Windows MCP implementation."""
 
+from background_processes import configure_background_processes
+
+configure_background_processes()
+
 from windows_mcp.__main__ import _build_mcp
 
 from licensing.middleware import LicenseMiddleware, register_license_tools

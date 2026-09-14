@@ -9,6 +9,10 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from background_processes import configure_background_processes
+
+configure_background_processes()
+
 from fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 from windows_mcp.desktop.service import Desktop

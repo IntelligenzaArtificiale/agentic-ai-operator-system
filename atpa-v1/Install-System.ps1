@@ -34,7 +34,7 @@ function Find-Codex {
     throw 'Codex CLI non trovato. Installa o aggiorna ChatGPT/Codex prima di continuare.'
 }
 if($env:OS -ne 'Windows_NT' -or -not [Environment]::Is64BitOperatingSystem){throw 'Richiesto Windows 10/11 x64.'}
-foreach($required in @($uv,$wheel,$recorderArchive,(Join-Path $pluginSource '.codex-plugin\plugin.json'),(Join-Path $packageRoot 'runtime\Update-Dashboard.ps1'),(Join-Path $packageRoot 'runtime\dashboard-locked.html'),(Join-Path $packageRoot 'runtime\licensed-windows-mcp.py'),(Join-Path $packageRoot 'runtime\licensing\client.py'),(Join-Path $packageRoot 'runtime\procedure-runner\server.py'),(Join-Path $packageRoot 'runtime\procedure-runner\experience.py'),(Join-Path $packageRoot 'template\company-profile.json'),(Join-Path $packageRoot 'template\shared-experience\index.json'))){if(-not(Test-Path -LiteralPath $required)){throw "Pacchetto incompleto: $required"}}
+foreach($required in @((Join-Path $packageRoot 'runtime\background_processes.py'),(Join-Path $packageRoot 'runtime\Invoke-BackgroundCommand.ps1'),$uv,$wheel,$recorderArchive,(Join-Path $pluginSource '.codex-plugin\plugin.json'),(Join-Path $packageRoot 'runtime\Update-Dashboard.ps1'),(Join-Path $packageRoot 'runtime\dashboard-locked.html'),(Join-Path $packageRoot 'runtime\licensed-windows-mcp.py'),(Join-Path $packageRoot 'runtime\licensing\client.py'),(Join-Path $packageRoot 'runtime\procedure-runner\server.py'),(Join-Path $packageRoot 'runtime\procedure-runner\experience.py'),(Join-Path $packageRoot 'template\company-profile.json'),(Join-Path $packageRoot 'template\shared-experience\index.json'))){if(-not(Test-Path -LiteralPath $required)){throw "Pacchetto incompleto: $required"}}
 $codex=Find-Codex
 
 # Motore Windows locale: PyPI per aggiornabilità, wheel incluso come fallback.
@@ -58,12 +58,14 @@ if(-not(Test-Path -LiteralPath $runnerPython) -or -not(Test-Path -LiteralPath $r
 New-Item -ItemType Directory -Force -Path $programRoot | Out-Null
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\licensing') -Destination $programRoot -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\licensed-windows-mcp.py') -Destination $programRoot -Force
+Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\background_processes.py') -Destination $programRoot -Force
 $licensedWindowsMcp=Join-Path $programRoot 'licensed-windows-mcp.py'
 & $codex mcp add windows-mcp -- $runnerPython $licensedWindowsMcp
 if($LASTEXITCODE -ne 0){throw 'Registrazione MCP non riuscita.'}
 
 # Runtime, aggiornamenti e OpenSteps portatile.
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\Update-Dashboard.ps1') -Destination $programRoot -Force
+Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\Invoke-BackgroundCommand.ps1') -Destination $programRoot -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\dashboard') -Destination $programRoot -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\procedure-runner') -Destination $programRoot -Recurse -Force
 $runnerServer=Join-Path $programRoot 'procedure-runner\server.py'
@@ -74,7 +76,7 @@ $updaterSource=Join-Path $packageRoot 'Check-AgenticUpdate.ps1'
 if(-not(Test-Path -LiteralPath $updaterSource)){throw 'Pacchetto incompleto: Check-AgenticUpdate.ps1'}
 Copy-Item -LiteralPath $updaterSource -Destination $programRoot -Force
 Write-Utf8 (Join-Path $programRoot 'update-settings.json') (@{update_manifest_url=$UpdateManifestUrl}|ConvertTo-Json)
-Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.5.2';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
+Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.5.3';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
 $recorderRoot=Join-Path $programRoot 'OpenSteps\0.1.0'
 if(-not(Test-Path -LiteralPath $recorderRoot)){New-Item -ItemType Directory -Force -Path $recorderRoot|Out-Null;Expand-Archive -LiteralPath $recorderArchive -DestinationPath $recorderRoot}
 $recorderExe=Get-ChildItem -LiteralPath $recorderRoot -Filter OpenSteps.App.exe -Recurse -File|Select-Object -First 1
@@ -175,11 +177,11 @@ try {
     $licenseState=($statusJson | Out-String | ConvertFrom-Json)
     $licenseActive=($licenseState.active -eq $true)
 } catch { $licenseActive=$false }
-$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.5.2';mcp_configured=($mcpText-match 'enabled:\s+true');runner_configured=($runnerText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);licensing_installed=(Test-Path -LiteralPath $licensedWindowsMcp);activation_shortcut=(Test-Path -LiteralPath (Join-Path $desktop 'Attiva Agentic AI Operator System.lnk'));updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $programRoot 'dashboard\index.html'));company_profile_ready=(Test-Path -LiteralPath $companyProfile);procedure_root=$procedureRoot;restart_required=$true;activation_required=(-not $licenseActive);license_active=$licenseActive;activation_window_opened=$false}
+$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.5.3';mcp_configured=($mcpText-match 'enabled:\s+true');runner_configured=($runnerText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);licensing_installed=(Test-Path -LiteralPath $licensedWindowsMcp);activation_shortcut=(Test-Path -LiteralPath (Join-Path $desktop 'Attiva Agentic AI Operator System.lnk'));updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $programRoot 'dashboard\index.html'));company_profile_ready=(Test-Path -LiteralPath $companyProfile);procedure_root=$procedureRoot;restart_required=$true;activation_required=(-not $licenseActive);license_active=$licenseActive;activation_window_opened=$false}
 $result.ok=$result.mcp_configured -and $result.runner_configured -and $result.plugin_installed -and $result.opensteps_installed -and $result.licensing_installed -and $result.activation_shortcut -and $result.updater_installed -and $result.dashboard_ready -and $result.company_profile_ready
 $out=if($ResultPath){$ResultPath}else{Join-Path $packageRoot 'INSTALL_RESULT.json'};Write-Utf8 $out ($result|ConvertTo-Json -Depth 6)
 if(-not $result.ok){throw "Verifica fallita. Leggi $out"}
-Write-Host 'Agentic AI Operator System 2.5.2 installato correttamente.'
+Write-Host 'Agentic AI Operator System 2.5.3 installato correttamente.'
 Write-Host "Risultato: $out"
 Write-Host 'Installazione completata. Non viene aperta automaticamente alcuna finestra di attivazione.'
 Write-Host 'Apri dal Desktop Attiva Agentic AI Operator System. Inserisci la chiave, attendi Licenza attiva, chiudi la finestra e comunicalo in chat.'
