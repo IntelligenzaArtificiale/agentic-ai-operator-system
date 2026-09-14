@@ -76,6 +76,13 @@ file scoped to the current Windows account. The stable device identifier is a
 one-way hash of the Windows machine identifier and an installation identifier;
 raw hardware identifiers are not sent or logged.
 
+Since 2.5.2, state transactions and first-time identity creation use a named
+Windows mutex per state directory and logon session. Activation verifies the
+persisted DPAPI state before reporting success, without a redundant second
+write. The dedicated UI has a separate single-instance mutex and serializes
+its background requests. Installers and dashboard checks do not open it.
+The UI never labels the signed offline lease deadline as subscription expiry.
+
 The client never trusts unsigned API fields. It verifies the Ed25519 signature,
 product, device binding and lease times before allowing an operation.
 

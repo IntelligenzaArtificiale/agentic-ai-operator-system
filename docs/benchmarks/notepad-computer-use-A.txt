@@ -1,0 +1,5 @@
+Ciao ciao
+AIOS benchmark locale 2026-09-14
+Motore: Computer Use
+Ordine: TEST-001 | Quantita: 3 | Stato: verificato
+REVISIONE B | TOTALE 42 | OK

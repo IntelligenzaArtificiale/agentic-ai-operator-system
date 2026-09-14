@@ -12,7 +12,6 @@ def main() -> int:
     try:
         LicenseClient().require()
     except LicenseError as error:
-        subprocess.Popen([sys.executable, __file__.replace("launcher.py", "activation_ui.py")])
         ctypes_message(str(error))
         return 3
     if len(sys.argv) < 2:

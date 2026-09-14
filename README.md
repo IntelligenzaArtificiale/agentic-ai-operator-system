@@ -1,10 +1,11 @@
 # Agentic AI Operator System
 
 Agentic AI Operator System is a local Windows platform for desktop automation,
-process recording and reusable agentic procedures. Its automation engine retains
-the internal `winbridge` identifier for compatibility.
-It uses a layered strategy instead of assuming that every application exposes the
-same accessibility model:
+process recording and reusable agentic procedures. The current installable
+package uses **Windows MCP 0.8.5**, the licensed procedure runner and OpenSteps.
+The older `src/winbridge` engine remains in this repository for development and
+compatibility; it is not the engine installed by the current package.
+That legacy engine uses a layered strategy:
 
 1. Win32 controls for older MFC, VB6, VCL and classic WinForms applications. The
    automatic mode probes this first and keeps the fast path when it finds a useful
@@ -13,7 +14,7 @@ same accessibility model:
 3. Native keyboard and mouse input as a compatibility fallback.
 4. Vision/OCR fallback (planned) for owner-drawn canvases and remote desktops.
 
-The server never accepts arbitrary shell commands. It returns stable window and
+The legacy WinBridge server never accepts arbitrary shell commands. It returns stable window and
 element references, checks that references are fresh, and requires the caller to
 target a specific window before input is injected.
 
@@ -34,28 +35,31 @@ Run the MCP server over stdio:
 
 ## Installable Windows package
 
-Build the portable package with `build_release.ps1`. On another Windows PC:
+Build the current package with `Build-SystemRelease.ps1 -Version 2.5.2`. On another Windows PC:
 
-1. Extract `Agentic-AI-Operator-System-2.5.1-Windows-x64.zip`.
+1. Extract `Agentic-AI-Operator-System-2.5.2-Windows-x64.zip`.
 2. Double-click `INSTALLA.cmd` (administrator rights are not required).
-3. Restart the ChatGPT desktop app or Codex.
-4. Type `/mcp` to verify that the global Windows automation server is connected.
-5. Open `Attiva Agentic AI Operator System` on the Desktop and enter the license in the dedicated local window.
-6. After activation, open the bundled OpenSteps recorder from its Desktop shortcut.
+3. Open `Attiva Agentic AI Operator System` on the Desktop yourself; the installer does not open activation windows.
+4. Enter the key there, wait for `Licenza attiva`, close the window and confirm completion in chat. Never paste the key in chat.
+5. After the status is verified, restart ChatGPT/Codex and open a new task.
+6. Verify the `windows-mcp` and `procedure-runner` servers; use the bundled OpenSteps recorder from its Desktop shortcut.
 
 An AI agent can install the archive autonomously after the user supplies its path
 and explicitly requests installation. The archive-root `AGENTS.md` and
-`INSTALL_FOR_CHATGPT.md` define the non-interactive procedure. The installer backs
-up the personal marketplace, installs `winbridge@personal`, and registers its
-bundled executable as the global `winbridge` MCP server. `DISINSTALLA.cmd` removes the per-user
-installation.
+`GUIDA-UTENTE.md` define the non-interactive procedure. The installer backs
+up the personal marketplace, installs `automazione-totale-procedure@personal`,
+and registers the license-gated `windows-mcp` and `procedure-runner` entry points.
+Installation success and license activation are separate checks.
 
 Updates are discovered through `release-manifest.json`; downloads are accepted
 only after their SHA-256 has been verified.
 
-Version 2.5.1 gates Windows MCP tools, the deterministic procedure runner,
+Version 2.5.2 gates Windows MCP tools, the deterministic procedure runner,
 OpenSteps and the local dashboard behind a signed, device-bound license lease.
 License keys are never requested in chat or stored locally in plaintext.
+
+See [2.5.2 release notes](docs/releases/2.5.2.md) and the
+[measured Windows MCP / Computer Use comparison](docs/benchmarks/2026-09-14-verdetto.md).
 
 This system targets supported Windows 10 and Windows 11 releases. A universal
 "100% of every application" guarantee is not technically possible: secure desktop,

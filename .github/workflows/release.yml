@@ -33,7 +33,9 @@ jobs:
           "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
       - name: Build package and manifest
         shell: pwsh
-        run: ./Build-SystemRelease.ps1 -Version $env:VERSION
+        run: |
+          ./Build-SystemRelease.ps1 -Version $env:VERSION
+          ./Build-LicensePanelPatch.ps1 -Version $env:VERSION
       - name: Publish GitHub release
         shell: pwsh
         env:
@@ -41,4 +43,5 @@ jobs:
         run: |
           $version=$env:VERSION
           $zip="release/Agentic-AI-Operator-System-$version-Windows-x64.zip"
-          gh release create "v$version" $zip release-manifest.json --title "Agentic AI Operator System $version" --generate-notes
+          $panel="release/AIOS-License-Panel-$version-Patch.zip"
+          gh release create "v$version" $zip $panel release-manifest.json --title "Agentic AI Operator System $version" --generate-notes

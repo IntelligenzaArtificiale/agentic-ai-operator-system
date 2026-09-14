@@ -1,0 +1,330 @@
+{
+  "date": "2026-09-14",
+  "runs": [
+    {
+      "engine": "computer-use",
+      "task": "notepad-create-save",
+      "start": 1789382391984,
+      "steps": [
+        {
+          "name": "launch",
+          "ms": 14776
+        },
+        {
+          "name": "recover_window",
+          "ms": 265
+        },
+        {
+          "name": "new_document",
+          "ms": 4458
+        },
+        {
+          "name": "observe_focus",
+          "ms": 4155
+        },
+        {
+          "name": "focus_document",
+          "ms": 3757
+        },
+        {
+          "name": "type_verify",
+          "ms": 3730
+        },
+        {
+          "name": "save_dialog",
+          "ms": 3883
+        },
+        {
+          "name": "find_save_dialog",
+          "ms": 390
+        },
+        {
+          "name": "save_shortcut_retry",
+          "ms": 4007
+        },
+        {
+          "name": "filename",
+          "ms": 3930
+        },
+        {
+          "name": "save_verify",
+          "ms": 3798
+        }
+      ],
+      "elapsed_ms": 144001,
+      "success": true,
+      "file": "docs/benchmarks/notepad-computer-use-A.txt"
+    },
+    {
+      "engine": "windows-mcp",
+      "task": "notepad-create-save",
+      "start": 1789382695262,
+      "steps": [
+        {
+          "name": "new_document",
+          "ms": 1109
+        },
+        {
+          "name": "type",
+          "ms": 6413
+        },
+        {
+          "name": "save_dialog",
+          "ms": 838
+        },
+        {
+          "name": "observe_save",
+          "ms": 739
+        },
+        {
+          "name": "retry_save_observe",
+          "ms": 1552
+        },
+        {
+          "name": "filename_save_verify",
+          "ms": 2636
+        }
+      ],
+      "elapsed_ms": 43697,
+      "file": "docs/benchmarks/notepad-windows-mcp-A.txt",
+      "success": false,
+      "outcome": "saved_but_text_mismatch",
+      "expected": "Quantita: 3",
+      "observed": "Quantità:3",
+      "notes": [
+        "Possibile correzione automatica di Blocco note; causa non ancora isolata.",
+        "Avvio escluso: applicazione già aperta; primo snapshot escluso dal subtotale tool."
+      ]
+    },
+    {
+      "engine": "computer-use",
+      "task": "notepad-reopen-append-save",
+      "start": 1789382814568,
+      "steps": [
+        {
+          "name": "open_dialog",
+          "ms": 3791
+        },
+        {
+          "name": "dialog_ready",
+          "ms": 3709
+        },
+        {
+          "name": "filename",
+          "ms": 3910
+        },
+        {
+          "name": "open_verify",
+          "ms": 3806
+        },
+        {
+          "name": "append_position",
+          "ms": 3796
+        },
+        {
+          "name": "append_verify",
+          "ms": 3777
+        },
+        {
+          "name": "save_verify",
+          "ms": 3728
+        }
+      ],
+      "elapsed_ms": 79841,
+      "success": true,
+      "file": "docs/benchmarks/notepad-computer-use-A.txt"
+    },
+    {
+      "engine": "windows-mcp",
+      "task": "notepad-reopen-append-save",
+      "start": 1789382902648,
+      "steps": [
+        {
+          "name": "open_dialog",
+          "ms": 1567
+        },
+        {
+          "name": "dialog_ready",
+          "ms": 711
+        },
+        {
+          "name": "filename_open_verify",
+          "ms": 2706
+        },
+        {
+          "name": "document_ready",
+          "ms": 963
+        },
+        {
+          "name": "append_save_verify",
+          "ms": 3764
+        }
+      ],
+      "elapsed_ms": 42210,
+      "success": true,
+      "file": "docs/benchmarks/notepad-windows-mcp-A.txt",
+      "notes": [
+        "Verificata riga aggiunta; discrepanza del contenuto precedente preservata.",
+        "Screenshot immediati dopo le azioni mostravano stato precedente: richieste osservazioni successive."
+      ]
+    },
+    {
+      "engine": "computer-use",
+      "task": "antigravity-new-file",
+      "start": 1789382962215,
+      "steps": [
+        {
+          "name": "launch",
+          "ms": 14253
+        },
+        {
+          "name": "recover_windows",
+          "ms": 298
+        },
+        {
+          "name": "observe_editor",
+          "ms": 3335
+        },
+        {
+          "name": "new_file",
+          "ms": 4633
+        },
+        {
+          "name": "type_verify",
+          "ms": 1865
+        },
+        {
+          "name": "save_dialog",
+          "ms": 2205
+        },
+        {
+          "name": "dialog_ready",
+          "ms": 761
+        },
+        {
+          "name": "filename",
+          "ms": 3971
+        },
+        {
+          "name": "save_verify",
+          "ms": 4383
+        }
+      ],
+      "elapsed_ms": 123933,
+      "file": "docs/benchmarks/antigravity-computer-use-A.txt",
+      "success": true,
+      "notes": [
+        "Errore avvio ma finestra presente, recuperata.",
+        "Alcuni tempi di lettura codice inclusi nel totale; usare subtotal tool, non confronto del totale."
+      ]
+    },
+    {
+      "engine": "windows-mcp",
+      "task": "antigravity-new-file",
+      "start": 1789383113229,
+      "steps": [
+        {
+          "name": "launch",
+          "ms": 5784
+        },
+        {
+          "name": "editor_ready",
+          "ms": 694
+        },
+        {
+          "name": "recover_switch",
+          "ms": 46624
+        },
+        {
+          "name": "new_file",
+          "ms": 3821
+        },
+        {
+          "name": "type_save_dialog",
+          "ms": 6305
+        },
+        {
+          "name": "dialog_ready",
+          "ms": 2057
+        },
+        {
+          "name": "filename_save",
+          "ms": 1989
+        },
+        {
+          "name": "recover_wrong_focus_type_save",
+          "ms": 3803
+        }
+      ],
+      "elapsed_ms": 152524,
+      "success": true,
+      "file": "docs/benchmarks/antigravity-windows-mcp-A.txt",
+      "notes": [
+        "Click dell'agente su placeholder anziché editor: primo salvataggio vuoto, corretto nel file nuovo.",
+        "Snapshot con UI tree costoso incluso.",
+        "Primo screenshot dopo launch escluso dal subtotal.",
+        "Chiusura/relaunch: nuovo handle osservato; stato caldo."
+      ]
+    },
+    {
+      "engine": "windows-mcp",
+      "task": "google-sheets-create-write-formula",
+      "start": 1789383291470,
+      "steps": [
+        {
+          "name": "open_browser_tab",
+          "ms": 13976
+        },
+        {
+          "name": "navigate",
+          "ms": 2422
+        },
+        {
+          "name": "title_first_cell",
+          "ms": 3740
+        },
+        {
+          "name": "value_formula_verify",
+          "ms": 3162
+        },
+        {
+          "name": "verify_formula_saved",
+          "ms": 1342
+        }
+      ],
+      "elapsed_ms": 79540,
+      "success": true,
+      "artifact": "Google Sheets: AIOS benchmark MCP 2026-09-14",
+      "notes": [
+        "A1 TEST MCP, A2 21, A3 formula =A2*2 risultato42; icona salvataggio cloud verificata.",
+        "Totale comprende lettura codice; subtotale tool incompleto di un'osservazione dopo caricamento."
+      ]
+    },
+    {
+      "engine": "computer-use",
+      "task": "google-sheets-create-write-formula",
+      "start": 1789383383452,
+      "steps": [
+        {
+          "name": "observe_browser",
+          "ms": 1167
+        }
+      ],
+      "elapsed_ms": 17318,
+      "success": false,
+      "outcome": "runtime_policy_stop_url_detection",
+      "notes": [
+        "Nessun input inviato. Nessun file Google Sheets creato dal motore CU. Nessun ulteriore uso Computer Use nel turno."
+      ]
+    }
+  ],
+  "methodology": {
+    "type": "exploratory_single_workstation",
+    "repetitions_per_task_per_engine": 1,
+    "tool_timings": "subtotals of measured calls only; some screenshots excluded",
+    "wall_timings": "include model reasoning, commentary, some code reads; not production throughput",
+    "cold_warm": "Notepad CU cold launch/MCP warm; Antigravity restart warm cache; no controlled randomized repeated trials",
+    "verification": "new text files checked read-only after actual UI save; Google Sheets observed cells/formula/cloud icon",
+    "not_included": "PC locked/headless not tested; computer chiuso interpreted as Computer Use"
+  }
+}

@@ -4,7 +4,7 @@ Sistema ideato da **Alessandro Ciciarelli**, fondatore di **Intelligenza Artific
 
 ## Dopo l'installazione
 
-Prima apri dal Desktop **Attiva Agentic AI Operator System** e inserisci la chiave nella finestra dedicata. La chiave non deve mai essere incollata in chat. Poi chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Le funzioni centrali disponibili sono:
+L'installer non apre automaticamente finestre di attivazione. Apri dal Desktop **Attiva Agentic AI Operator System**, inserisci la chiave e attendi **Licenza attiva**. Chiudi la finestra e comunicalo in chat: verrà verificato lo stato, senza chiederti la chiave. Dopo la prima installazione chiudi completamente ChatGPT/Codex, riaprilo e crea una nuova task. Se un'operazione non viene confermata, premi **Verifica stato** prima di reinserire la chiave; non reinstallare il sistema. Le funzioni centrali disponibili sono:
 
 - `$crea-procedura`: riceve uno o più path esportati dal registratore e genera una procedura dinamica.
 - `$crea-procedura-guidata`: crea una procedura senza registrazione tramite domande adattive, una per volta.

@@ -1,0 +1,76 @@
+{
+  "started_at": "2026-09-14T10:29:10.631Z",
+  "runs": [
+    {
+      "engine": "windows-mcp",
+      "task": "gmail",
+      "start": 1789381759452,
+      "steps": [
+        {
+          "name": "mcp__windows_mcp__App",
+          "ms": 530
+        },
+        {
+          "name": "mcp__windows_mcp__Shortcut",
+          "ms": 797
+        },
+        {
+          "name": "open_gmail_and_observe",
+          "ms": 6121
+        },
+        {
+          "name": "gmail_ready",
+          "ms": 8748
+        },
+        {
+          "name": "compose",
+          "ms": 10595
+        },
+        {
+          "name": "compose_screenshot",
+          "ms": 840
+        },
+        {
+          "name": "recipient_verify",
+          "ms": 1862
+        },
+        {
+          "name": "subject_body_verify",
+          "ms": 4387
+        },
+        {
+          "name": "body_retry_verify",
+          "ms": 7214,
+          "error": "Previous Type omitted required coordinates; no text written in that call."
+        },
+        {
+          "name": "send_verify",
+          "ms": 1740
+        },
+        {
+          "name": "sent_confirmation",
+          "ms": 678
+        }
+      ],
+      "elapsed_ms": 125161,
+      "success": true,
+      "evidence": "Gmail displayed 'Messaggio inviato'; received self-email visible at top of inbox; body above existing signature.",
+      "timing_notes": "Wall time includes model reasoning and commentary. Tool subtotal excludes initial ctrl+t observation; not a precise pure execution total."
+    },
+    {
+      "engine": "computer-use",
+      "task": "gmail",
+      "success": false,
+      "status": "runtime_stopped_turn",
+      "error": "Could not determine current browser URL on Windows with enough confidence to enforce policy.",
+      "elapsed_ms": null
+    }
+  ],
+  "preflight": {
+    "computer_use_list_apps_timeouts": 1
+  },
+  "editor_tests": {
+    "status": "not_run",
+    "reason": "Computer Use stopped this turn; no further desktop input attempted."
+  }
+}

@@ -18,6 +18,11 @@ import uuid
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
+try:
+    from .locking import serialized
+except ImportError:  # Dedicated scripts also run outside the package.
+    from locking import serialized
+
 
 PRODUCT = "Agentic AI Operator System"
 DEFAULT_API = "https://www.alessandrociciarelli.it/ai-os/api.php"
@@ -74,7 +79,7 @@ def _utc(value: str) -> datetime:
 
 
 class LicenseClient:
-    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.5.1"):
+    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.5.2"):
         root = state_dir or Path(os.environ.get("LOCALAPPDATA", Path.home())) / "Intelligenza Artificiale Italia" / "Agentic AI Operator System"
         self.state_dir = Path(root)
         self.state_path = self.state_dir / "license.dat"
@@ -87,31 +92,42 @@ class LicenseClient:
 
     def status(self, refresh: bool = True) -> dict:
         try:
-            state = self._load()
-            if refresh and datetime.now(timezone.utc) >= _utc(self._lease(state)["refresh_after"]):
-                try:
-                    state = self._refresh(state)
-                except (OSError, urllib.error.URLError):
-                    pass
-            lease = self._lease(state)
-            now = datetime.now(timezone.utc)
-            if now + timedelta(minutes=5) < _utc(state.get("last_clock", "1970-01-01T00:00:00Z")):
-                raise LicenseError("Orologio di sistema non valido. Collegati a Internet e riprova.")
-            if now >= _utc(lease["valid_until"]):
-                raise LicenseError("Licenza scaduta o verifica online necessaria.")
-            state["last_clock"] = now.isoformat().replace("+00:00", "Z")
-            self._save(state)
-            return {"active": True, "valid_until": lease["valid_until"], "license_id": lease["license_id"]}
+            return self._status_transaction(refresh)
         except LicenseError as error:
             return {"active": False, "message": str(error)}
+        except OSError:
+            return {"active": False, "code": "local_state_unavailable", "message": "Stato licenza locale non accessibile o verifica già in corso. Attendi e premi Verifica stato; non reinserire subito la chiave."}
         except Exception:
-            return {"active": False, "message": "Attivazione richiesta."}
+            return {"active": False, "code": "invalid_state", "message": "Impossibile verificare lo stato licenza. Apri la finestra di attivazione."}
+
+    @serialized
+    def _status_transaction(self, refresh: bool) -> dict:
+        state = self._load()
+        if refresh and datetime.now(timezone.utc) >= _utc(self._lease(state)["refresh_after"]):
+            try:
+                state = self._refresh(state)
+            except (OSError, urllib.error.URLError):
+                pass  # Only an unexpired, signed offline lease is accepted below.
+        result = self._valid_status(state)
+        state["last_clock"] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        self._save(state)
+        return result
+
+    def _valid_status(self, state: dict) -> dict:
+        lease = self._lease(state)
+        now = datetime.now(timezone.utc)
+        if now + timedelta(minutes=5) < _utc(state.get("last_clock", "1970-01-01T00:00:00Z")):
+            raise LicenseError("Orologio di sistema non valido. Collegati a Internet e riprova.")
+        if now >= _utc(lease["valid_until"]):
+            raise LicenseError("Licenza scaduta o verifica online necessaria.")
+        return {"active": True, "valid_until": lease["valid_until"], "license_id": lease["license_id"]}
 
     def require(self) -> None:
         result = self.status()
         if not result["active"]:
-            raise LicenseError(result["message"] + " Apri 'Attiva Agentic AI Operator System' dal menu Start.")
+            raise LicenseError(result["message"] + " Apri 'Attiva Agentic AI Operator System' dal Desktop.")
 
+    @serialized
     def activate(self, license_key: str) -> dict:
         response = self._post({
             "action": "activate", "license_key": license_key, "device_id": self.device_id(),
@@ -124,10 +140,12 @@ class LicenseClient:
             "signature": response["signature"],
             "last_clock": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         }
-        self._lease(state)
+        self._valid_status(state)
         self._save(state)
-        return self.status(refresh=False)
+        # Verify what is actually persisted, without a second write after success.
+        return self._valid_status(self._load())
 
+    @serialized
     def deactivate(self) -> None:
         state = self._load()
         try:
@@ -135,6 +153,7 @@ class LicenseClient:
         finally:
             self.state_path.unlink(missing_ok=True)
 
+    @serialized
     def device_id(self) -> str:
         if self._device_id_cache is not None:
             return self._device_id_cache
@@ -177,7 +196,6 @@ class LicenseClient:
         response = self._post({"action": "validate", "activation_token": state["activation_token"], "device_id": self.device_id()})
         state.update({"lease": response["lease"], "signature": response["signature"]})
         self._lease(state)
-        self._save(state)
         return state
 
     def _lease(self, state: dict) -> dict:
@@ -187,7 +205,11 @@ class LicenseClient:
         except (InvalidSignature, ValueError, KeyError) as error:
             raise LicenseError("Licenza locale non autentica.") from error
         lease = json.loads(payload)
-        if lease.get("product") != PRODUCT or lease.get("device_hash") != self.device_id() or lease.get("status") != "active":
+        if lease.get("product") != PRODUCT:
+            raise LicenseError("Licenza non valida per questo prodotto.")
+        if lease.get("status") != "active":
+            raise LicenseError("Licenza non attiva.")
+        if lease.get("device_hash") != self.device_id():
             raise LicenseError("Licenza non valida per questo dispositivo.")
         return lease
 
@@ -214,5 +236,8 @@ class LicenseClient:
     def _save(self, state: dict) -> None:
         self.state_dir.mkdir(parents=True, exist_ok=True)
         temporary = self.state_path.with_name(f"license-{os.getpid()}-{uuid.uuid4().hex}.tmp")
-        temporary.write_bytes(_protect(json.dumps(state, separators=(",", ":")).encode()))
-        os.replace(temporary, self.state_path)
+        try:
+            temporary.write_bytes(_protect(json.dumps(state, separators=(",", ":")).encode()))
+            os.replace(temporary, self.state_path)
+        finally:
+            temporary.unlink(missing_ok=True)

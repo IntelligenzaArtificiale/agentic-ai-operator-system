@@ -10,10 +10,7 @@ $licensePython=Join-Path $env:APPDATA 'uv\tools\windows-mcp\Scripts\python.exe'
 if(-not(Test-Path -LiteralPath $licenseCheck) -or -not(Test-Path -LiteralPath $licensePython)){throw 'Componente licenza non installato.'}
 & $licensePython $licenseCheck | Out-Null
 if($LASTEXITCODE -ne 0){
-    $activation=Join-Path $programRoot 'licensing\activation_ui.py'
-    $licensePythonW=Join-Path (Split-Path $licensePython) 'pythonw.exe'
-    Start-Process -FilePath $licensePythonW -ArgumentList @($activation) -WindowStyle Hidden
-    throw 'Licenza non attiva. Usa la finestra di attivazione dedicata.'
+    throw 'Licenza non attiva. Apri dal Desktop Attiva Agentic AI Operator System, verifica lo stato e chiudi la finestra.'
 }
 $dashboardRoot=Join-Path $programRoot 'dashboard-live'
 $sourceDashboard=Join-Path $PSScriptRoot 'dashboard'
@@ -166,7 +163,7 @@ $counts=[ordered]@{
 $sharedExperience=Read-SharedExperience $ProcedureRoot
 $counts.shared_lessons=$sharedExperience.lessons
 $payload=[ordered]@{
-    generated_at=(Get-Date).ToString('o');version='2.5.1';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
+    generated_at=(Get-Date).ToString('o');version='2.5.2';product='Agentic AI Operator System';brand='Intelligenza Artificiale Italia';author='Alessandro Ciciarelli';root=$ProcedureRoot
     system=[ordered]@{chatgpt=$chatgpt;codex=[bool]$codex;mcp=$mcp;plugin=$plugin;recorder=$recorder}
     company=[ordered]@{status='not_configured'}
     counts=$counts;experience=$sharedExperience;procedures=$items
