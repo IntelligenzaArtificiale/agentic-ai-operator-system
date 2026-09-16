@@ -6,12 +6,21 @@
 - [x] Replace dashboard presentation with accessible process-first navigation and truthful metrics.
 - [x] Refresh local data without repeated shell launches; protect every dashboard route.
 - [x] Regression-test empty, populated, malformed and unlicensed states and responsive layout.
-- [ ] Build, commit and publish a verified Windows release.
-- [ ] Remove only AIOS installations, integrations and user-requested procedure data on this device.
-- [ ] Verify clean state and document preserved shared dependencies and reinstall instructions.
+- [x] Build, commit and publish a verified Windows release.
+- [x] Remove only AIOS installations, integrations and user-requested procedure data on this device.
+- [x] Verify clean state and document preserved shared dependencies and reinstall instructions.
 
 Scope: no new unattended scheduler or production actions. Preserve source repository,
 ChatGPT/Codex, browsers, accounts and unrelated plugins. Local reset happens last.
+
+Verified: 74 Python tests, separate packaged MCP integrations, PowerShell telemetry,
+browser QA at five widths and a full 2.6.0 install before the reset. Release CI
+succeeded and the published archive SHA-256 matches its manifest. The license
+server acknowledged device deactivation before identity removal. AIOS plugin,
+both MCP registrations, runtime and old local data were removed; procedure data
+and legacy folders were recycled, not irreversibly erased. Source and shared
+Python remain. Restart the host app before installing from the latest release;
+activate via the Desktop shortcut, then configure company DNA and a new process.
 
 ## Central licensing 2.5.0
 
