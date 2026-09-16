@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-16",
+  "target": "atpa-v1/runtime/dashboard/index.html",
+  "framework": "Vanilla HTML, CSS, JavaScript; licensed loopback Python server",
+  "previous": "Dark green panels, inline template rendering, configuration and metrics mixed",
+  "preserved": "Runtime ownership, license boundary, company/procedure schemas, no remote assets",
+  "introduced": "Process-first list, drilled-down history, explicit stale/error/empty states, tokenized styles",
+  "motion": "Button press only; reduced-motion supported",
+  "fonts": "Bahnschrift display and Segoe UI body; intentional offline Windows typography"
+}

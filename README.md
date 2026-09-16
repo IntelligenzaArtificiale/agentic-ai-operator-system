@@ -35,9 +35,9 @@ Run the MCP server over stdio:
 
 ## Installable Windows package
 
-Build the current package with `Build-SystemRelease.ps1 -Version 2.5.3`. On another Windows PC:
+Build the current package with `Build-SystemRelease.ps1 -Version 2.6.0`. On another Windows PC:
 
-1. Extract `Agentic-AI-Operator-System-2.5.3-Windows-x64.zip`.
+1. Extract `Agentic-AI-Operator-System-2.6.0-Windows-x64.zip`.
 2. Double-click `INSTALLA.cmd` (administrator rights are not required).
 3. Open `Attiva Agentic AI Operator System` on the Desktop yourself; the installer does not open activation windows.
 4. Enter the key there, wait for `Licenza attiva`, close the window and confirm completion in chat. Never paste the key in chat.
@@ -54,11 +54,11 @@ Installation success and license activation are separate checks.
 Updates are discovered through `release-manifest.json`; downloads are accepted
 only after their SHA-256 has been verified.
 
-Version 2.5.3 gates Windows MCP tools, the deterministic procedure runner,
+Version 2.6.0 gates Windows MCP tools, the deterministic procedure runner,
 OpenSteps and the local dashboard behind a signed, device-bound license lease.
 License keys are never requested in chat or stored locally in plaintext.
 
-See [2.5.3 release notes](docs/releases/2.5.3.md) and the
+See [2.6.0 release notes](docs/releases/2.6.0.md) and the
 [measured Windows MCP / Computer Use comparison](docs/benchmarks/2026-09-14-verdetto.md).
 
 This system targets supported Windows 10 and Windows 11 releases. A universal

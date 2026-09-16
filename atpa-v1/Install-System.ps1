@@ -17,6 +17,8 @@ $pluginRoot=Join-Path $userRoot "plugins\$pluginName"
 $marketplaceRoot=Join-Path $userRoot '.agents\plugins'
 $marketplaceFile=Join-Path $marketplaceRoot 'marketplace.json'
 $uv=Join-Path $packageRoot 'payload\uv.exe'
+$constraints=Join-Path $packageRoot 'runtime\dependencies.txt'
+if(-not(Test-Path -LiteralPath $constraints)){throw 'Pacchetto incompleto: runtime/dependencies.txt'}
 $wheel=Join-Path $packageRoot 'payload\windows_mcp-0.8.5-py3-none-any.whl'
 $recorderArchive=Join-Path $packageRoot 'payload\OpenSteps-0.1.0-win-x64.zip'
 if(-not(Test-Path -LiteralPath $recorderArchive)){$recorderArchive=Join-Path $packageRoot 'payload\ProcedureRecorder-0.1.0-win-x64.zip'}
@@ -36,21 +38,27 @@ function Find-Codex {
 if($env:OS -ne 'Windows_NT' -or -not [Environment]::Is64BitOperatingSystem){throw 'Richiesto Windows 10/11 x64.'}
 foreach($required in @((Join-Path $packageRoot 'runtime\background_processes.py'),(Join-Path $packageRoot 'runtime\Invoke-BackgroundCommand.ps1'),$uv,$wheel,$recorderArchive,(Join-Path $pluginSource '.codex-plugin\plugin.json'),(Join-Path $packageRoot 'runtime\Update-Dashboard.ps1'),(Join-Path $packageRoot 'runtime\dashboard-locked.html'),(Join-Path $packageRoot 'runtime\licensed-windows-mcp.py'),(Join-Path $packageRoot 'runtime\licensing\client.py'),(Join-Path $packageRoot 'runtime\procedure-runner\server.py'),(Join-Path $packageRoot 'runtime\procedure-runner\experience.py'),(Join-Path $packageRoot 'template\company-profile.json'),(Join-Path $packageRoot 'template\shared-experience\index.json'))){if(-not(Test-Path -LiteralPath $required)){throw "Pacchetto incompleto: $required"}}
 $codex=Find-Codex
+foreach($asset in 'dashboard_data.py','dashboard\index.html','dashboard\tokens.css','dashboard\workspace.css','dashboard\view.js','dashboard\detail.js','dashboard\dashboard.js'){
+    if(-not(Test-Path -LiteralPath (Join-Path $packageRoot "runtime\$asset"))){throw "Pacchetto dashboard incompleto: $asset"}
+}
 
 # Motore Windows locale: PyPI per aggiornabilità, wheel incluso come fallback.
 $engineRoots=@(
-    [IO.Path]::GetFullPath((Join-Path $userRoot '.local\bin\')),
     [IO.Path]::GetFullPath((Join-Path $env:APPDATA 'uv\tools\windows-mcp\'))
 )
 Get-CimInstance Win32_Process -ErrorAction SilentlyContinue|ForEach-Object{
     $engineProcess=$_
-    if($engineProcess.ExecutablePath -and ($engineRoots|Where-Object{$engineProcess.ExecutablePath.StartsWith($_,[StringComparison]::OrdinalIgnoreCase)})){
+    if($engineProcess.ExecutablePath -and ($engineProcess.ExecutablePath -eq $windowsMcpExe -or ($engineRoots|Where-Object{$engineProcess.ExecutablePath.StartsWith($_,[StringComparison]::OrdinalIgnoreCase)}))){
         Stop-Process -Id $engineProcess.ProcessId -Force -ErrorAction SilentlyContinue
     }
 }
 Start-Sleep -Milliseconds 500
-& $uv tool install --force --with 'cryptography>=45,<51' 'windows-mcp==0.8.5'
-if($LASTEXITCODE -ne 0){& $uv tool install --force --with 'cryptography>=45,<51' $wheel}
+# uv splits constraint paths containing spaces; resolve relative to the package.
+Push-Location -LiteralPath $packageRoot
+try{
+    & $uv tool install --force --python 3.12 --constraints 'runtime/dependencies.txt' --with cryptography 'windows-mcp==0.8.5'
+    if($LASTEXITCODE -ne 0){& $uv tool install --force --python 3.12 --constraints 'runtime/dependencies.txt' --with cryptography 'payload/windows_mcp-0.8.5-py3-none-any.whl'}
+}finally{Pop-Location}
 if($LASTEXITCODE -ne 0 -or -not(Test-Path -LiteralPath $windowsMcpExe)){throw 'Installazione motore Windows non riuscita.'}
 if(-not(Test-Path -LiteralPath $runnerPython) -or -not(Test-Path -LiteralPath $runnerPythonW)){throw 'Runtime Python del motore Windows non trovato.'}
 & $codex mcp remove windows-mcp 2>$null|Out-Null
@@ -59,6 +67,7 @@ New-Item -ItemType Directory -Force -Path $programRoot | Out-Null
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\licensing') -Destination $programRoot -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\licensed-windows-mcp.py') -Destination $programRoot -Force
 Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\background_processes.py') -Destination $programRoot -Force
+Copy-Item -LiteralPath (Join-Path $packageRoot 'runtime\dashboard_data.py') -Destination $programRoot -Force
 $licensedWindowsMcp=Join-Path $programRoot 'licensed-windows-mcp.py'
 & $codex mcp add windows-mcp -- $runnerPython $licensedWindowsMcp
 if($LASTEXITCODE -ne 0){throw 'Registrazione MCP non riuscita.'}
@@ -76,7 +85,7 @@ $updaterSource=Join-Path $packageRoot 'Check-AgenticUpdate.ps1'
 if(-not(Test-Path -LiteralPath $updaterSource)){throw 'Pacchetto incompleto: Check-AgenticUpdate.ps1'}
 Copy-Item -LiteralPath $updaterSource -Destination $programRoot -Force
 Write-Utf8 (Join-Path $programRoot 'update-settings.json') (@{update_manifest_url=$UpdateManifestUrl}|ConvertTo-Json)
-Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.5.3';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
+Write-Utf8 (Join-Path $programRoot 'installed-version.json') (@{product='Agentic AI Operator System';version='2.6.0';installed_at=(Get-Date).ToString('o')}|ConvertTo-Json)
 $recorderRoot=Join-Path $programRoot 'OpenSteps\0.1.0'
 if(-not(Test-Path -LiteralPath $recorderRoot)){New-Item -ItemType Directory -Force -Path $recorderRoot|Out-Null;Expand-Archive -LiteralPath $recorderArchive -DestinationPath $recorderRoot}
 $recorderExe=Get-ChildItem -LiteralPath $recorderRoot -Filter OpenSteps.App.exe -Recurse -File|Select-Object -First 1
@@ -88,6 +97,8 @@ $launcher=Join-Path $programRoot 'licensing\launcher.py'
 $shortcut.TargetPath=$runnerPythonW;$shortcut.Arguments='"'+$launcher+'" "'+$recorderExe.FullName+'"';$shortcut.WorkingDirectory=$recorderExe.DirectoryName;$shortcut.Description='Agentic AI Operator System · Intelligenza Artificiale Italia';$shortcut.Save()
 $activationShortcut=$shell.CreateShortcut((Join-Path $desktop 'Attiva Agentic AI Operator System.lnk'))
 $activationShortcut.TargetPath=$runnerPythonW;$activationShortcut.Arguments='"'+(Join-Path $programRoot 'licensing\activation_ui.py')+'"';$activationShortcut.WorkingDirectory=(Join-Path $programRoot 'licensing');$activationShortcut.Description='Gestisci la licenza Agentic AI Operator System';$activationShortcut.Save()
+$dashboardShortcut=$shell.CreateShortcut((Join-Path $desktop 'Processi Agentic AI Operator System.lnk'))
+$dashboardShortcut.TargetPath=$runnerPythonW;$dashboardShortcut.Arguments='"'+(Join-Path $programRoot 'licensing\dashboard_launcher.py')+'"';$dashboardShortcut.WorkingDirectory=$programRoot;$dashboardShortcut.Description='Apri il pannello dei processi AIOS';$dashboardShortcut.Save()
 
 # Migrazione non distruttiva e struttura procedure senza creare procedure reali.
 if((Test-Path -LiteralPath $legacyProcedureRoot) -and -not(Test-Path -LiteralPath $procedureRoot)){
@@ -177,12 +188,14 @@ try {
     $licenseState=($statusJson | Out-String | ConvertFrom-Json)
     $licenseActive=($licenseState.active -eq $true)
 } catch { $licenseActive=$false }
-$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.5.3';mcp_configured=($mcpText-match 'enabled:\s+true');runner_configured=($runnerText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);licensing_installed=(Test-Path -LiteralPath $licensedWindowsMcp);activation_shortcut=(Test-Path -LiteralPath (Join-Path $desktop 'Attiva Agentic AI Operator System.lnk'));updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $programRoot 'dashboard\index.html'));company_profile_ready=(Test-Path -LiteralPath $companyProfile);procedure_root=$procedureRoot;restart_required=$true;activation_required=(-not $licenseActive);license_active=$licenseActive;activation_window_opened=$false}
+$result=[ordered]@{ok=$false;product='Agentic AI Operator System';version='2.6.0';mcp_configured=($mcpText-match 'enabled:\s+true');runner_configured=($runnerText-match 'enabled:\s+true');plugin_installed=($pluginText-match "(?m)^$pluginName@personal\s+installed, enabled");opensteps_installed=[bool](Test-Path -LiteralPath $recorderExe.FullName);licensing_installed=(Test-Path -LiteralPath $licensedWindowsMcp);activation_shortcut=(Test-Path -LiteralPath (Join-Path $desktop 'Attiva Agentic AI Operator System.lnk'));updater_installed=(Test-Path -LiteralPath (Join-Path $programRoot 'Check-AgenticUpdate.ps1'));update_manifest_url=$UpdateManifestUrl;dashboard_ready=(Test-Path -LiteralPath (Join-Path $programRoot 'dashboard\index.html'));company_profile_ready=(Test-Path -LiteralPath $companyProfile);procedure_root=$procedureRoot;restart_required=$true;activation_required=(-not $licenseActive);license_active=$licenseActive;activation_window_opened=$false}
 $result.ok=$result.mcp_configured -and $result.runner_configured -and $result.plugin_installed -and $result.opensteps_installed -and $result.licensing_installed -and $result.activation_shortcut -and $result.updater_installed -and $result.dashboard_ready -and $result.company_profile_ready
 $out=if($ResultPath){$ResultPath}else{Join-Path $packageRoot 'INSTALL_RESULT.json'};Write-Utf8 $out ($result|ConvertTo-Json -Depth 6)
 if(-not $result.ok){throw "Verifica fallita. Leggi $out"}
-Write-Host 'Agentic AI Operator System 2.5.3 installato correttamente.'
+Write-Host 'Agentic AI Operator System 2.6.0 installato correttamente.'
 Write-Host "Risultato: $out"
 Write-Host 'Installazione completata. Non viene aperta automaticamente alcuna finestra di attivazione.'
 Write-Host 'Apri dal Desktop Attiva Agentic AI Operator System. Inserisci la chiave, attendi Licenza attiva, chiudi la finestra e comunicalo in chat.'
 Write-Host 'Dopo la prima installazione chiudi completamente ChatGPT/Codex e riaprilo.'
+# An unactivated license is expected on first install, not an installer failure.
+exit 0

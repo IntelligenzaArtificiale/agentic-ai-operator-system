@@ -79,7 +79,7 @@ def _utc(value: str) -> datetime:
 
 
 class LicenseClient:
-    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.5.3"):
+    def __init__(self, state_dir: Path | None = None, api_url: str | None = None, version: str = "2.6.0"):
         root = state_dir or Path(os.environ.get("LOCALAPPDATA", Path.home())) / "Intelligenza Artificiale Italia" / "Agentic AI Operator System"
         self.state_dir = Path(root)
         self.state_path = self.state_dir / "license.dat"
@@ -148,10 +148,9 @@ class LicenseClient:
     @serialized
     def deactivate(self) -> None:
         state = self._load()
-        try:
-            self._post({"action": "deactivate", "activation_token": state["activation_token"], "device_id": self.device_id()})
-        finally:
-            self.state_path.unlink(missing_ok=True)
+        self._post({"action": "deactivate", "activation_token": state["activation_token"], "device_id": self.device_id()})
+        # Keep the token on network failure so the user can retry releasing the slot.
+        self.state_path.unlink(missing_ok=True)
 
     @serialized
     def device_id(self) -> str:

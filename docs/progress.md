@@ -1,5 +1,18 @@
 # Compiled procedure runtime
 
+## 2.6.0 — operational dashboard and clean reinstall (2026-09-16)
+
+- [x] Review local runtime, dashboard, installer and ownership of installed files.
+- [x] Replace dashboard presentation with accessible process-first navigation and truthful metrics.
+- [x] Refresh local data without repeated shell launches; protect every dashboard route.
+- [x] Regression-test empty, populated, malformed and unlicensed states and responsive layout.
+- [ ] Build, commit and publish a verified Windows release.
+- [ ] Remove only AIOS installations, integrations and user-requested procedure data on this device.
+- [ ] Verify clean state and document preserved shared dependencies and reinstall instructions.
+
+Scope: no new unattended scheduler or production actions. Preserve source repository,
+ChatGPT/Codex, browsers, accounts and unrelated plugins. Local reset happens last.
+
 ## Central licensing 2.5.0
 
 - [x] Define the threat model, safe enforcement boundary and lease protocol.

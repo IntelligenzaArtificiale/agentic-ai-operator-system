@@ -50,6 +50,23 @@ def test_expired_activation_not_persisted(tmp_path):
     assert not client.state_path.exists()
 
 
+def test_failed_deactivation_preserves_state_for_retry(tmp_path, monkeypatch):
+    client, _ = activated_client(tmp_path)
+    client.activate("TEST")
+    saved = client.state_path.read_bytes()
+    monkeypatch.setattr(client, "_post", Mock(side_effect=OSError("offline")))
+    with pytest.raises(OSError):
+        client.deactivate()
+    assert client.state_path.read_bytes() == saved
+
+
+def test_confirmed_deactivation_removes_local_lease(tmp_path):
+    client, _ = activated_client(tmp_path)
+    client.activate("TEST")
+    client.deactivate()
+    assert not client.state_path.exists()
+
+
 def test_inactive_response_never_becomes_success_message():
     client = Mock()
     client.activate.return_value = {"active": False, "message": "Non verificata"}

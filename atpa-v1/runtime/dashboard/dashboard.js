@@ -1,56 +1,70 @@
+/* Catalog controller: preserves filters during refresh; never executes a procedure. */
 (() => {
-  const data = window.ATPA_DATA || {system:{},counts:{},procedures:[]};
-  const byId = id => document.getElementById(id);
-  const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  const duration = milliseconds => milliseconds == null ? '—' : milliseconds < 1000 ? `${milliseconds} ms` : `${(milliseconds / 1000).toFixed(1)} s`;
-
-  function renderCompany() {
-    const company = data.company || {status:'not_configured'};
-    if (company.status !== 'configured') {
-      byId('company').innerHTML = '<div class="brand">Profilo azienda</div><h2>Configura il DNA aziendale</h2><p>Avvia <b>$profilo-azienda</b> per contestualizzare procedure, reparti e strumenti.</p>';
-      return;
-    }
-    const identity = company.identity || {};
-    const business = company.business || {};
-    const operations = company.operations || {};
-    const tags = [...(business.sectors||[]), ...(operations.departments||[])].slice(0, 8);
-    byId('company').innerHTML = `<div class="brand">Profilo azienda</div><h2>${escapeHtml(identity.display_name||identity.legal_name||'Azienda')}</h2><p>${escapeHtml(business.summary||'DNA aziendale configurato.')}</p><div class="company-data">${tags.map(tag=>`<span>${escapeHtml(tag)}</span>`).join('')}<span>${(company.sources||[]).length} fonti</span></div>`;
-  }
-
-  function renderSystem() {
-    const labels = {chatgpt:'ChatGPT',codex:'Codex',mcp:'MCP Windows',plugin:'Sistema',recorder:'OpenSteps'};
-    byId('system').innerHTML = Object.entries(labels).map(([key,label]) => `<div class="pill ${data.system[key]?'ok':''}"><i class="dot"></i><b>${label}</b><br><span>${data.system[key]?'Operativo':'Non rilevato'}</span></div>`).join('');
-    const items = [['Procedure',data.counts.total],['Piani compilati',data.counts.compiled],['Esecuzioni',data.counts.runs],['Esperienze condivise',data.counts.shared_lessons||0],['Interventi IA',data.counts.ai_interventions],['Errori',data.counts.incidents],['Tempo medio verificato',duration(data.counts.average_duration_ms)]];
-    byId('stats').innerHTML = items.map(([label,value]) => `<div class="stat"><strong>${value ?? 0}</strong><span>${label}</span></div>`).join('');
-  }
-
-  function renderCards() {
-    const query = byId('q').value.toLowerCase();
-    const department = byId('department').value;
-    const status = byId('status').value;
-    const procedures = data.procedures.filter(item => {
-      const meta = item.meta;
-      const haystack = [meta.name,meta.description,meta.department,meta.category,...(meta.roles||[])].join(' ').toLowerCase();
-      return (!query || haystack.includes(query)) && (!department || meta.department === department) && (!status || meta.status === status);
+  const V=window.AiosView, {el,arr,esc}=V;
+  let data=null, page=1, visible=[], pending=false;
+  const pageSize=10;
+  function render() {
+    if(!data) return;
+    const all=arr(data.procedures), q=el('q').value.trim().toLocaleLowerCase('it');
+    let filtered=all.filter(item=>{
+      const m=item.meta || {};
+      return (!q || [m.name,m.description,m.department,...arr(m.roles)].join(' ').toLocaleLowerCase('it').includes(q))
+        && (!el('department').value || m.department===el('department').value)
+        && (!el('status').value || (el('status').value==='attention'?V.attention(item):m.status===el('status').value));
     });
-    byId('grid').innerHTML = procedures.length ? procedures.map(item => `<article class="card" data-slug="${escapeHtml(item.meta.slug)}"><span class="badge">${escapeHtml(item.meta.status)} · ${escapeHtml(item.plan?.status||'missing')}</span><h3>${escapeHtml(item.meta.name)}</h3><p>${escapeHtml(item.meta.description)}</p><div class="meta"><span>${escapeHtml(item.meta.department||'Senza reparto')}</span><span>v${escapeHtml(item.meta.version)}</span></div><div class="performance"><span>${item.metrics.run_count||0} esecuzioni</span><span>${item.metrics.deterministic_blocks||0} blocchi locali</span><span>${item.metrics.ai_interventions||0} interventi IA</span></div></article>`).join('') : '<div class="empty">Nessuna procedura corrispondente.</div>';
-    document.querySelectorAll('.card').forEach(card => card.addEventListener('click', () => showDetail(card.dataset.slug)));
+    const name=(a,b)=>String(a.meta?.name||'').localeCompare(String(b.meta?.name||''),'it');
+    const time=item=>Date.parse(item.metrics?.last_run?.at)||0;
+    filtered.sort((a,b)=>{
+      if(el('sort').value==='recent') return time(b)-time(a)||name(a,b);
+      if(el('sort').value==='duration') return V.num(b.metrics?.average_duration_ms)-V.num(a.metrics?.average_duration_ms)||name(a,b);
+      if(el('sort').value==='name') return name(a,b);
+      return Number(V.attention(b))-Number(V.attention(a))||time(b)-time(a)||name(a,b);
+    });
+    const pages=Math.max(1,Math.ceil(filtered.length/pageSize)); page=Math.min(page,pages);
+    visible=filtered.slice((page-1)*pageSize,page*pageSize);
+    el('result-count').textContent=`${filtered.length} di ${all.length} processi`;
+    el('grid').innerHTML=visible.length?visible.map(V.row).join(''):all.length
+      ? '<div class="empty"><h2>Nessun processo con questi filtri.</h2><p>Prova un altro nome o visualizza tutti i reparti.</p><button id="clear-filters">Azzera filtri</button></div>'
+      : '<div class="empty"><h2>Il primo processo parte da qui.</h2><p>Descrivi il lavoro da affidare all’agente. Poi collaudalo, verifica il risultato e ottimizzalo con dati reali.</p><button data-command="$crea-procedura-guidata" class="primary">Crea un processo</button></div>';
+    el('pagination').innerHTML=filtered.length>pageSize?`<button id="prev" ${page===1?'disabled':''}>Precedente</button><span>Pagina ${page} di ${pages}</span><button id="next" ${page===pages?'disabled':''}>Successiva</button>`:'';
+    el('prev')?.addEventListener('click',()=>{page--;render();});
+    el('next')?.addEventListener('click',()=>{page++;render();});
+    el('clear-filters')?.addEventListener('click',()=>{for(const id of ['q','department','status'])el(id).value='';page=1;render();});
   }
-
-  function showDetail(slug) {
-    const item = data.procedures.find(candidate => candidate.meta.slug === slug);
-    const meta = item.meta;
-    const nodes = meta.flow?.nodes || [];
-    const slow = item.metrics.slowest_steps || [];
-    byId('detailBody').innerHTML = `<div class="brand">${escapeHtml(meta.category||'Procedura')}</div><h2>${escapeHtml(meta.name)}</h2><p>${escapeHtml(meta.description)}</p><p><b>Reparto:</b> ${escapeHtml(meta.department||'—')} · <b>Versione:</b> ${escapeHtml(meta.version)} · <b>Piano:</b> ${escapeHtml(item.plan?.status||'missing')} (${item.plan?.blocks||0} blocchi)</p><h3>Prestazioni verificate</h3><table class="metric-table"><tr><th>Esecuzioni</th><td>${item.metrics.run_count||0}</td><th>Successi verificati</th><td>${item.metrics.successful_runs||0}</td></tr><tr><th>Interventi IA</th><td>${item.metrics.ai_interventions||0}</td><th>Blocchi locali</th><td>${item.metrics.deterministic_blocks||0}</td></tr><tr><th>Migliore</th><td>${duration(item.metrics.best_duration_ms)}</td><th>Ultima verificata</th><td>${duration(item.metrics.last_duration_ms)}</td></tr><tr><th>Errori</th><td>${item.metrics.incident_count||0}</td><th>Media</th><td>${duration(item.metrics.average_duration_ms)}</td></tr></table><h3>Step più lenti</h3><table class="metric-table">${slow.length?slow.map(step=>`<tr><td>${escapeHtml(step.label)}</td><td>${duration(step.average_duration_ms)}</td><td>${step.samples} campioni</td></tr>`).join(''):'<tr><td>Nessun campione verificato disponibile.</td></tr>'}</table><h3>Flusso operativo</h3><div class="flow">${nodes.length?nodes.map(node=>`<div class="node ${node.type==='condition'?'condition':''}"><b>${escapeHtml(node.label)}</b><br><small>${escapeHtml(node.description||'')}</small></div>`).join(''):'<span class="empty">Diagramma non ancora definito.</span>'}</div><p><a href="${item.folder_uri}">Apri cartella procedura</a></p>`;
-    byId('detail').showModal();
+  async function refresh(manual=false) {
+    if(pending || el('detail').open || el('command-dialog').open)return;
+    if(!manual && el('grid').contains(document.activeElement))return;
+    pending=true; el('refresh').disabled=true; el('refresh').setAttribute('aria-busy','true');
+    const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),10000);
+    try {
+      const response=await fetch('/api/data',{cache:'no-store',signal:controller.signal});
+      if(!response.ok) {
+        if(response.status===403) {data=null;for(const id of ['grid','stats','company','system-body','pagination'])el(id).replaceChildren();el('company-name').textContent='Spazio aziendale';}
+        throw new Error(response.status===403?'Licenza non attiva. Apri “Attiva Agentic AI Operator System” dal Desktop, verifica lo stato e riprova.':'Catalogo non disponibile. Usa “Visualizza procedure” nella chat e riprova.');
+      }
+      const next=await response.json();
+      if(!next || !Array.isArray(next.procedures))throw new Error('Formato del catalogo non valido. Rigenera la dashboard dalla chat.');
+      data=next;
+      const selection=el('department').value;
+      el('department').innerHTML='<option value="">Tutti i reparti</option>'+[...new Set(data.procedures.map(p=>p.meta?.department).filter(x=>typeof x==='string'&&x))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      el('department').value=selection;
+      V.company(data); V.system(data); V.stats(data); render();
+      el('version').textContent='Versione '+data.version;
+      el('updated').textContent='Aggiornato '+V.date(data.generated_at);
+      el('notice').hidden=!arr(data.warnings).length; el('notice').className='notice';
+      el('notice').textContent=arr(data.warnings).length?`${data.warnings.length} segnalazioni nella lettura dei dati. ${data.warnings.slice(0,3).join(' · ')}`:'';
+    } catch(error) {
+      el('notice').hidden=false; el('notice').className='notice error';
+      el('notice').textContent=(error.name==='AbortError'?'Aggiornamento troppo lento. Premi Aggiorna per riprovare.':error.message)+(data?' I dati visibili sono quelli dell’ultimo aggiornamento riuscito.':'');
+      if(!data)el('result-count').textContent='Catalogo non disponibile';
+    } finally {
+      clearTimeout(timeout);pending=false;el('refresh').disabled=false;el('refresh').removeAttribute('aria-busy');el('grid').setAttribute('aria-busy','false');
+    }
   }
-
-  const departments = [...new Set(data.procedures.map(item => item.meta.department).filter(Boolean))].sort();
-  byId('department').innerHTML += departments.map(value => `<option>${escapeHtml(value)}</option>`).join('');
-  ['q','department','status'].forEach(id => byId(id).addEventListener(id === 'q' ? 'input' : 'change', renderCards));
-  byId('close-detail').addEventListener('click', () => byId('detail').close());
-  renderCompany();
-  renderSystem();
-  renderCards();
+  for(const id of ['q','department','status','sort'])el(id).addEventListener(id==='q'?'input':'change',()=>{page=1;render();});
+  el('grid').addEventListener('click',event=>{const button=event.target.closest('[data-detail]'); if(button && visible[Number(button.dataset.detail)])window.AiosDetail.show(visible[Number(button.dataset.detail)]);});
+  el('refresh').addEventListener('click',()=>refresh(true));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
+  setInterval(()=>{if(!document.hidden)refresh();},30000);
+  refresh();
 })();

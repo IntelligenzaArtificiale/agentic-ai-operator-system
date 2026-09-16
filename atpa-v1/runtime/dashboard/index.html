@@ -3,34 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Agentic AI Operator System</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Processi · Agentic AI Operator System</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="workspace.css">
 </head>
 <body>
-  <header>
-    <div class="brand">IntelligenzaArtificialeItalia.net</div>
-    <h1>Agentic AI<br>Operator System</h1>
-    <p>Procedure, prestazioni ed esperienza operativa in un unico catalogo locale.</p>
-  </header>
-  <main class="wrap">
-    <section id="company" class="company"></section>
-    <section id="system" class="status"></section>
-    <section id="stats" class="stats"></section>
-    <div class="toolbar">
-      <input id="q" placeholder="Cerca procedura o ruolo">
-      <select id="department"><option value="">Tutti i reparti</option></select>
-      <select id="status"><option value="">Tutti gli stati</option><option>draft</option><option>validated</option><option>active</option></select>
+  <a class="skip" href="#main">Vai ai processi</a>
+  <aside class="rail">
+    <div class="wordmark"><span class="brand-mark">A</span><div>Agentic<span>AI Operator System</span></div></div>
+    <nav aria-label="Sezioni">
+      <a href="#processes" aria-current="page">Processi</a>
+      <a href="#company">DNA aziendale</a>
+      <a href="#system">Configurazione</a>
+    </nav>
+    <div class="rail-note"><strong>Il tuo spazio operativo</strong><p>Processi, risultati ed esperienza sul tuo dispositivo.</p><span id="version">AIOS</span></div>
+  </aside>
+  <main id="main">
+    <div class="page-head">
+      <div><p class="context" id="company-name">Spazio aziendale</p><h1>Processi</h1><p>Una vista chiara sul lavoro delle tue automazioni.</p></div>
+      <button id="create" class="primary" data-command="$crea-procedura-guidata">Nuovo processo</button>
     </div>
-    <section id="grid" class="grid"></section>
-    <footer>Agentic AI Operator System · Alessandro Ciciarelli · Intelligenza Artificiale Italia</footer>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <section id="stats" class="summary" aria-label="Riepilogo"><p>Caricamento del catalogo…</p></section>
+    <section id="processes" aria-labelledby="process-title">
+      <div class="section-head"><h2 id="process-title">Il lavoro, a colpo d’occhio</h2><div class="refresh"><span id="updated">Dati non ancora caricati</span><button id="refresh">Aggiorna</button></div></div>
+      <div class="filters">
+        <label class="search-field">Cerca processo<input id="q" type="search" placeholder="Nome, reparto o ruolo" autocomplete="off"></label>
+        <label>Reparto<select id="department"><option value="">Tutti i reparti</option></select></label>
+        <label>Stato<select id="status"><option value="">Tutti gli stati</option><option value="draft">Bozza</option><option value="validated">Collaudato</option><option value="active">Attivo</option><option value="attention">Da verificare</option></select></label>
+        <label>Ordina<select id="sort"><option value="attention">Prima da verificare</option><option value="recent">Ultima esecuzione</option><option value="name">Nome</option><option value="duration">Tempo medio</option></select></label>
+      </div>
+      <p id="result-count" class="muted" aria-live="polite"></p>
+      <div id="grid" class="process-list" aria-busy="true"></div>
+      <div id="pagination" class="pagination"></div>
+      <p class="footnote">“Attivo” è lo stato della procedura, non una conferma di esecuzione in corso. I tempi includono solo risultati verificati.</p>
+    </section>
+    <section id="company" class="company-section" aria-label="DNA aziendale"></section>
+    <details id="system" class="system-section"><summary>Configurazione del dispositivo</summary><div id="system-body"></div></details>
+    <footer>Agentic AI Operator System · Intelligenza Artificiale Italia<span id="refresh-note">Il catalogo si aggiorna ogni 30 secondi mentre questa pagina è visibile.</span></footer>
   </main>
-  <dialog id="detail">
-    <div class="detail">
-      <button id="close-detail" class="close">Chiudi</button>
-      <div id="detailBody"></div>
-    </div>
+  <dialog id="detail" aria-labelledby="detail-title">
+    <div class="dialog-head"><span>Scheda processo</span><button id="close-detail" aria-label="Chiudi scheda">Chiudi</button></div>
+    <div id="detailBody"></div>
   </dialog>
-  <script src="data.js"></script>
+  <dialog id="command-dialog" aria-labelledby="command-title">
+    <div class="dialog-head"><h2 id="command-title">Continua nella chat</h2><button id="close-command">Chiudi</button></div>
+    <p>Questo pannello non avvia operazioni. Copia il comando e incollalo nella chat in cui usi AIOS.</p>
+    <label for="command-text">Comando</label><textarea id="command-text" readonly rows="3"></textarea>
+    <button id="copy-command" class="primary">Copia comando</button><p id="copy-status" role="status" aria-live="polite"></p>
+  </dialog>
+  <script src="view.js"></script>
+  <script src="detail.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>

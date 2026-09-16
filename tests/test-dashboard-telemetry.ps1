@@ -21,8 +21,11 @@ try{
     $sharedPath=Join-Path $procedureRoot 'experience\patterns';New-Item -ItemType Directory -Force -Path $sharedPath|Out-Null
     $shared=@{schema_version=1;lessons=@(@{lesson_id='shared-1';status='candidate'},@{lesson_id='shared-2';status='validated'})}
     [IO.File]::WriteAllText((Join-Path $sharedPath 'fixture.json'),($shared|ConvertTo-Json -Depth 10),$utf8)
-    & (Join-Path $PSScriptRoot '..\atpa-v1\runtime\Update-Dashboard.ps1') -ProcedureRoot $procedureRoot|Out-Null
-    $data=Get-Content -Raw -LiteralPath (Join-Path $procedureRoot 'catalogo\data.js')
+    $outputFile=Join-Path $testRoot 'dashboard.json'
+    $python=Join-Path $PSScriptRoot '..\.venv\Scripts\python.exe'
+    & $python (Join-Path $PSScriptRoot '..\atpa-v1\runtime\dashboard_data.py') --root $procedureRoot --output $outputFile
+    if($LASTEXITCODE -ne 0){throw 'Proiezione dashboard fallita.'}
+    $data=Get-Content -Raw -LiteralPath $outputFile
     if($data -notmatch '"runs":3'){throw "Conteggio run non corretto. Data: $data"}
     if($data -notmatch '"incidents":1'){throw 'Conteggio incidenti non corretto.'}
     if($data -notmatch '"successful_runs":1'){throw 'Conteggio successi verificati non corretto.'}
@@ -35,11 +38,14 @@ try{
     if($data -notmatch '"candidates":1'){throw 'Esperienze candidate non conteggiate.'}
     if($data -notmatch '"validated":1'){throw 'Esperienze validate non conteggiate.'}
     if($data -notmatch '"display_name":"Azienda QA"'){throw 'Profilo azienda non incluso.'}
-    if($data -notmatch '"version":"2.4.0"'){throw 'Versione dashboard non corretta.'}
-    foreach($asset in 'index.html','styles.css','dashboard.js','data.js'){
-        if(-not(Test-Path -LiteralPath (Join-Path $procedureRoot "catalogo\$asset"))){throw "Asset dashboard mancante: $asset"}
+    if($data -notmatch '"version":"2.6.0"'){throw 'Versione dashboard non corretta.'}
+    foreach($asset in 'index.html','tokens.css','workspace.css','dashboard.js','view.js','detail.js'){
+        if(-not(Test-Path -LiteralPath (Join-Path $PSScriptRoot "..\atpa-v1\runtime\dashboard\$asset"))){throw "Asset dashboard mancante: $asset"}
     }
     Write-Host 'Dashboard telemetry test passed.'
 }finally{
-    if(Test-Path -LiteralPath $testRoot){Remove-Item -LiteralPath $testRoot -Recurse -Force}
+    $resolved=[IO.Path]::GetFullPath($testRoot)
+    $tempPrefix=[IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\')+'\'
+    if(-not $resolved.StartsWith($tempPrefix,[StringComparison]::OrdinalIgnoreCase) -or (Split-Path $resolved -Leaf) -notlike 'agentic-dashboard-test-*'){throw 'Percorso temporaneo non valido.'}
+    if(Test-Path -LiteralPath $resolved){Remove-Item -LiteralPath $resolved -Recurse -Force}
 }

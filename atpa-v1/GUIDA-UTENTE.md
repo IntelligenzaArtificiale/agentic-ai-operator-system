@@ -27,7 +27,20 @@ In alternativa, senza usare il registratore, avvia `$crea-procedura-guidata` e d
 
 Le procedure sono conservate in `Documenti\Agentic AI Operator System\procedure`; il template non è una procedura attiva e si trova in `TEMPLATE-PROCEDURA`.
 
-## Aggiornamenti
+## Dashboard dei processi
+
+Dopo l’attivazione, apri dal Desktop **Processi Agentic AI Operator System**.
+Trovi ricerca, reparti, stati e filtro **Da verificare**, ultimo esito, esecuzioni
+e tempi. La scheda mostra storico, passaggi lenti e flusso. I comandi **Avvia**,
+**Collauda** e **Ottimizza** si copiano nella chat: il pannello non esegue azioni
+produttive da solo. “Attivo” è lo stato della procedura, non un’attività in corso.
+
+I dati si rileggono ogni 30 secondi mentre la pagina è visibile. Le durate si
+calcolano solo sulle run riuscite e verificate. I controlli dei componenti sono
+una fotografia della configurazione con data; si aggiornano tramite l’icona o
+`$visualizza-procedure`. Non attestano un servizio autonomo in funzione H24.
+
+## Aggiornamenti del sistema
 
 Esegui `Check-AgenticUpdate.ps1` senza parametri per controllare una nuova versione.
 Il controllo non installa nulla. Dopo una conferma esplicita, usa

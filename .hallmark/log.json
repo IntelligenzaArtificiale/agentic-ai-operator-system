@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-09-16",
+    "scope": "dashboard",
+    "macrostructure": "Index-First",
+    "theme": "Coral",
+    "nav": "N3 functional rail",
+    "footer": "Ft2",
+    "enrichment": "none",
+    "brief": "Catalogo operativo locale, esiti e tempi verificati; font Windows per funzionare offline"
+  },
+  {
     "date": "2026-09-03",
     "scope": "app",
     "macrostructure": "Workbench",
