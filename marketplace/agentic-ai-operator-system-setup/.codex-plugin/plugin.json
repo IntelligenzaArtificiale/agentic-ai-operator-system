@@ -1,0 +1,29 @@
+{
+  "name": "agentic-ai-operator-system-setup",
+  "version": "1.0.0",
+  "description": "Guida verificabile all'installazione e ai primi passi di Agentic AI Operator System per Windows.",
+  "author": {
+    "name": "Intelligenza Artificiale Italia",
+    "url": "https://www.intelligenzaartificialeitalia.net"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AIOS — Setup Windows",
+    "shortDescription": "Configura AIOS su Windows",
+    "longDescription": "Assistente di configurazione per Agentic AI Operator System. Verifica i prerequisiti, guida l'installazione della release ufficiale Windows e distingue installazione, attivazione e disponibilità degli strumenti. Le procedure operative richiedono il software locale e una licenza attiva. In una chat senza accesso al PC offre istruzioni, non controllo remoto. Non installa nulla alla semplice aggiunta del plugin.",
+    "developerName": "Intelligenza Artificiale Italia",
+    "category": "Productivity",
+    "capabilities": ["Guida all'installazione", "Verifica configurazione", "Primi passi AIOS"],
+    "websiteURL": "https://www.intelligenzaartificialeitalia.net",
+    "privacyPolicyURL": "https://www.alessandrociciarelli.it/ai-os/legal/privacy.html",
+    "termsOfServiceURL": "https://www.alessandrociciarelli.it/ai-os/legal/terms.html",
+    "brandColor": "#10B981",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "defaultPrompt": [
+      "Aiutami a installare AIOS sul mio PC Windows.",
+      "AIOS è già installato: verifica se posso iniziare.",
+      "Spiegami come iniziare con DNA aziendale e procedure."
+    ]
+  }
+}

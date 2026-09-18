@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-09-17",
+    "scope": "license-server/legal",
+    "macrostructure": "Long Document",
+    "theme": "inherited AIOS austere green",
+    "nav": "N9 edge-aligned minimal",
+    "footer": "Ft6 letter close",
+    "enrichment": "none",
+    "brief": "Static privacy, terms and support documents; local Windows fonts, no tracking or scripts; visual check at 320, 375, 414, 768 and 1280 px"
+  },
+  {
     "date": "2026-09-16",
     "scope": "dashboard",
     "macrostructure": "Index-First",

@@ -1,0 +1,22 @@
+/* AIOS public documents: existing brand colours and local fonts, no external assets. */
+:root {
+  color-scheme: dark;
+  --color-paper: oklch(14% .012 250);
+  --color-ink: oklch(95% .008 250);
+  --color-muted: oklch(75% .018 250);
+  --color-rule: oklch(35% .018 250);
+  --color-accent: oklch(78% .15 166);
+  --color-hover: oklch(87% .10 166);
+  --font-display: Bahnschrift, 'Arial Narrow', sans-serif;
+  --font-body: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
+  --space-xs: .5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --text-sm: .875rem;
+  --text-base: 1rem;
+  --text-heading: 1.5rem;
+  --text-display: clamp(2rem, 6vw, 3.5rem);
+}

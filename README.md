@@ -20,6 +20,9 @@ target a specific window before input is injected.
 
 ## Development
 
+For the complete source archive, project map, backend setup and migration to
+another PC, see [Development handoff](docs/DEVELOPMENT-HANDOFF.md).
+
 ```powershell
 py -3.12 -m venv .venv
 .venv\Scripts\python -m pip install -e ".[dev]"
